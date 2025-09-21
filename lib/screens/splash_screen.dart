@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:yu_connect/screens/main/home_screen.dart';
 import 'package:yu_connect/screens/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -13,11 +15,27 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
+    _checkAuthStateAndNavigate(); //인증 상태 확인 함수 호출
+  }
+
+  void _checkAuthStateAndNavigate() async {
+    // 1초 대기 (로고를 충분히 보여주기 위함)
+    await Future.delayed(const Duration(seconds: 1));
+
+    //Firebase의 사용자 인증 상태 변화를 한 번만 감지
+    FirebaseAuth.instance.authStateChanges().first.then((user) {
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
+        if (user == null) {
+          // 사용자가 로그아웃 상태 > 로그인 화면으로 이동
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        } else {
+          // 사용자가 로그인 상태 > 홈 화면으로 이동
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        }
       }
     });
   }
