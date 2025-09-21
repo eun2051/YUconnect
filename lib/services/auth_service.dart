@@ -67,6 +67,7 @@ class AuthService {
             'createdAt': FieldValue.serverTimestamp(),
           });
 
+      logger.i('회원가입 및 사용자 정보 저장 성공: ${userCredential.user!.uid}');
       return userCredential;
     } on FirebaseAuthException catch (e) {
       logger.e('회원가입 실패: ${e.message}');
