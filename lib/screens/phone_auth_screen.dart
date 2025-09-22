@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:yu_connect/screens/signup/user_profile_setup_screen.dart';
 import 'package:yu_connect/services/phone_auth_service.dart';
 import 'package:yu_connect/screens/main/home_screen.dart';
 
@@ -91,12 +92,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
     try {
       await _phoneAuthService.signInWithSmsCode(smsCode: _smsController.text);
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('로그인 성공!')));
-      if (!mounted) return;
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const UserProfileSetupScreen()),
       );
     } catch (e) {
       if (!mounted) return;

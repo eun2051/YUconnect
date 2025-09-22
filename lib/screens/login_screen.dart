@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:yu_connect/screens/signup/signup_screen.dart';
 import 'package:yu_connect/screens/main/home_screen.dart';
 import 'package:yu_connect/screens/signup/verification_screen.dart';
+import 'package:yu_connect/services/auth_service.dart';
+//import 'package:yu_connect/widgets/error_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,7 +14,71 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+
   bool _isPasswordVisible = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _login() async {
+    // 이메일과 비밀번호가 비어있는지 확인
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      if (mounted) {
+        _showErrorDialog('이메일과 비밀번호를 모두 입력해주세요.');
+      }
+      return;
+    }
+    try {
+      // AuthService를 통해 로그인 시도
+      await _authService.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      // 로그인 성공 시 홈 화면으로 이동
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    } catch (e) {
+      // 로그인 실패 시 오류 메시지 표시
+      if (mounted) {
+        _showErrorDialog('회원정보가 없습니다.');
+      }
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Text(
+            '오류 발생',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Text(message, textAlign: TextAlign.center),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +128,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 30),
 
                   // 학교 이메일 입력 필드
-                  const SizedBox(
+                  SizedBox(
                     height: 50,
                     child: TextField(
+                      controller: _emailController,
                       decoration: InputDecoration(
                         labelText: '학교 이메일',
                         labelStyle: TextStyle(fontSize: 14.0),
@@ -78,6 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     height: 50,
                     child: TextField(
+                      controller: _passwordController,
                       textAlign: TextAlign.left,
                       obscureText: !_isPasswordVisible,
                       decoration: InputDecoration(
@@ -132,13 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // '로그인' 버튼
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ),
-                      );
-                    },
+                    onPressed: _login,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF006FFD),
                       minimumSize: const Size(double.infinity, 48),

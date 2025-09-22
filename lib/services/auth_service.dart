@@ -6,6 +6,15 @@ final logger = Logger();
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  bool _isPhoneNumberVerified = false;
+
+  // 휴대폰 번호 인증
+  void setPhoneNumberVerified(bool isVerified) {
+    _isPhoneNumberVerified = isVerified;
+    logger.i('휴대폰 인증 상태 변경: $_isPhoneNumberVerified');
+  }
 
   Future<void> sendVerificationEmail(String email) async {
     if (!email.endsWith('@yu.ac.kr')) {
@@ -22,16 +31,11 @@ class AuthService {
           androidPackageName: 'com.example.yourApp',
         ),
       );
+      logger.i('이메일 인증 링크 전송 성공');
     } catch (e) {
       logger.e('인증 이메일 전송 실패: $e');
+      rethrow;
     }
-  }
-
-  bool _isPhoneNumberVerified = false;
-
-  // 휴대폰 번호 인증 완료 플래그
-  void setPhoneNumberVerified(bool isVerified) {
-    _isPhoneNumberVerified = isVerified;
   }
 
   // 비밀번호 조건 설정 및 회원가입
@@ -76,17 +80,39 @@ class AuthService {
   }
 
   // 3. 이메일/비밀번호로 로그인
-  Future<UserCredential> signInWithEmailAndPassword({
+  Future<void> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
+    if (email.isEmpty || password.isEmpty) {
+      throw Exception('이메일과 비밀번호를 모두 입력해주세요.');
+    }
+    UserCredential userCredential;
+
     try {
-      return await _auth.signInWithEmailAndPassword(
+      userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        await signOut();
+        throw Exception('데이터베이스에 사용자 정보가 없습니다. 회원가입을 완료해주세요.');
+      }
+      logger.i('로그인 성공: ${userCredential.user!.uid}');
     } on FirebaseAuthException catch (e) {
-      logger.e('로그인 실패: ${e.message}');
+      if (e.code == 'user-not-found') {
+        throw Exception('등록되지 않은 이메일입니다.');
+      } else if (e.code == 'wrong-password') {
+        throw Exception('잘못된 비밀번호입니다.');
+      } else {
+        rethrow;
+      }
+    } catch (e) {
       rethrow;
     }
   }
@@ -95,6 +121,7 @@ class AuthService {
   Future<void> sendPasswordResetEmail(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
+      logger.i('비밀번호 재설정 이메일 전송 성공');
     } catch (e) {
       logger.e('비밀번호 재설정 이메일 전송 실패: $e');
     }
