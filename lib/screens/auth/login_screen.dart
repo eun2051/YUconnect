@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
 import '../../repositories/user_repository.dart';
-import '../main/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -183,24 +182,32 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/reset-password');
-                      },
-                      child: Text(
-                        '비밀번호를 잊어버리셨나요?',
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF006FFD),
-                          fontWeight: FontWeight.w800,
-                          fontSize: 12.0,
+                  Transform.translate(
+                    offset: const Offset(0, 4), // 위로 8픽셀 이동
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/reset-password');
+                        },
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero, // 기본 패딩 제거
+                          minimumSize: Size.zero, // 최소 크기 제거
+                          tapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap, // 탭 영역 축소
+                        ),
+                        child: Text(
+                          '비밀번호를 잊어버리셨나요?',
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF006FFD),
+                            fontWeight: FontWeight.w800,
+                            fontSize: 12.0,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 100),
                   ElevatedButton(
                     onPressed: handleLogin,
                     style: ElevatedButton.styleFrom(
@@ -216,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

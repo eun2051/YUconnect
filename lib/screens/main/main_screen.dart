@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
+import 'new_home_screen.dart';
 import 'notice_screen.dart';
 
 /// 앱 메인 네비게이터 화면 (홈/영대공지/영대민원/프로필)
@@ -14,7 +14,8 @@ class MainScreen extends StatefulWidget {
 class MainScreenState extends State<MainScreen> {
   late int _currentIndex;
   // 홈화면의 탭 상태를 제어하기 위한 키
-  final GlobalKey<HomeScreenState> _homeKey = GlobalKey<HomeScreenState>();
+  final GlobalKey<NewHomeScreenState> _homeKey =
+      GlobalKey<NewHomeScreenState>();
   final GlobalKey<NoticeScreenState> _noticeKey =
       GlobalKey<NoticeScreenState>();
 
@@ -41,7 +42,7 @@ class MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _screens = [
-      HomeScreen(key: _homeKey),
+      NewHomeScreen(key: _homeKey),
       NoticeScreen(key: _noticeKey),
       Center(child: Text('영대민원')), // 임시
       Center(child: Text('프로필')), // 임시
