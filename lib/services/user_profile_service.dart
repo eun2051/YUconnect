@@ -1,0 +1,122 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+/// 사용자 프로필 정보 모델
+class UserProfile {
+  final String id;
+  final String email;
+  final String name;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+
+  UserProfile({
+    required this.id,
+    required this.email,
+    required this.name,
+    required this.createdAt,
+    this.updatedAt,
+  });
+
+  /// Firestore에서 생성
+  factory UserProfile.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return UserProfile(
+      id: doc.id,
+      email: data['email'] ?? '',
+      name: data['name'] ?? '',
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
+    );
+  }
+
+  /// Firestore에 저장할 Map으로 변환
+  Map<String, dynamic> toFirestore() {
+    return {
+      'email': email,
+      'name': name,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
+    };
+  }
+
+  /// 복사본 생성
+  UserProfile copyWith({
+    String? id,
+    String? email,
+    String? name,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return UserProfile(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      name: name ?? this.name,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+}
+
+/// 사용자 프로필 관리 서비스
+class UserProfileService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final String _collection = 'user_profiles';
+
+  /// 사용자 프로필 저장 또는 업데이트
+  Future<void> saveUserProfile(String name) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('사용자가 로그인되어 있지 않습니다.');
+
+    final profile = UserProfile(
+      id: user.uid,
+      email: user.email ?? '',
+      name: name,
+      createdAt: DateTime.now(),
+    );
+
+    await _firestore
+        .collection(_collection)
+        .doc(user.uid)
+        .set(profile.toFirestore(), SetOptions(merge: true));
+  }
+
+  /// 사용자 프로필 조회
+  Future<UserProfile?> getUserProfile(String userId) async {
+    try {
+      final doc = await _firestore.collection(_collection).doc(userId).get();
+      if (doc.exists) {
+        return UserProfile.fromFirestore(doc);
+      }
+      return null;
+    } catch (e) {
+      print('사용자 프로필 조회 오류: $e');
+      return null;
+    }
+  }
+
+  /// 현재 사용자 프로필 조회
+  Future<UserProfile?> getCurrentUserProfile() async {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+    return getUserProfile(user.uid);
+  }
+
+  /// 사용자 이름 조회 (캐시된 방식)
+  Future<String> getUserName(String userId) async {
+    try {
+      final profile = await getUserProfile(userId);
+      if (profile?.name != null && profile!.name.isNotEmpty) {
+        return profile.name;
+      }
+      
+      // 프로필이 없으면 기본 이름 생성 및 저장
+      final defaultName = '사용자${userId.substring(0, 6)}';
+      await saveUserProfile(defaultName);
+      return defaultName;
+    } catch (e) {
+      print('사용자 이름 조회 오류: $e');
+      return '사용자${userId.substring(0, 6)}';
+    }
+  }
+}
