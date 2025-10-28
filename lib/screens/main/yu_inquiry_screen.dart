@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../models/inquiry.dart';
 import '../../repositories/inquiry_repository.dart';
 import '../../components/inquiry_card.dart';
+import '../../components/inquiry_search_bottom_sheet.dart';
 import '../inquiry_register_screen.dart';
 
 /// 영대민원 화면 - 등록된 민원/진행중/완료된 민원을 슬라이드 형식으로 관리
@@ -87,6 +88,12 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
         elevation: 0,
         centerTitle: true,
         actions: [
+          // 🔥 검색 버튼 추가
+          IconButton(
+            onPressed: _showSearchBottomSheet,
+            icon: const Icon(Icons.search, color: Color(0xFF006FFD), size: 24),
+            tooltip: '민원 검색',
+          ),
           // 관리자 전환 버튼 추가
           IconButton(
             onPressed: () {
@@ -95,7 +102,9 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
               });
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(_isAdmin ? '관리자 모드로 전환되었습니다' : '사용자 모드로 전환되었습니다'),
+                  content: Text(
+                    _isAdmin ? '관리자 모드로 전환되었습니다' : '사용자 모드로 전환되었습니다',
+                  ),
                   duration: const Duration(seconds: 1),
                 ),
               );
@@ -132,33 +141,35 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
           ),
         ],
       ),
-      floatingActionButton: !_isAdmin ? Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 검색 버튼 (돋보기) - 사용자 모드에서만
-          FloatingActionButton(
-            heroTag: "search",
-            onPressed: _showSearchDialog,
-            backgroundColor: Colors.grey[600],
-            child: const Icon(Icons.search, color: Colors.white),
-          ),
-          const SizedBox(height: 16),
-          // 추가 버튼 (+) - 사용자 모드에서만
-          FloatingActionButton(
-            heroTag: "add",
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const InquiryRegisterScreen(),
+      floatingActionButton: !_isAdmin
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 검색 버튼 (돋보기) - 사용자 모드에서만
+                FloatingActionButton(
+                  heroTag: "search",
+                  onPressed: _showSearchBottomSheet, // 🔥 바텀시트 호출로 변경
+                  backgroundColor: Colors.grey[600],
+                  child: const Icon(Icons.search, color: Colors.white),
                 ),
-              );
-            },
-            backgroundColor: Colors.blue,
-            child: const Icon(Icons.add, color: Colors.white),
-          ),
-        ],
-      ) : null,
+                const SizedBox(height: 16),
+                // 추가 버튼 (+) - 사용자 모드에서만
+                FloatingActionButton(
+                  heroTag: "add",
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const InquiryRegisterScreen(),
+                      ),
+                    );
+                  },
+                  backgroundColor: Colors.blue,
+                  child: const Icon(Icons.add, color: Colors.white),
+                ),
+              ],
+            )
+          : null,
     );
   }
 
@@ -185,22 +196,29 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
               child: GestureDetector(
                 onTap: () => _onTabChanged(0),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: ShapeDecoration(
-                    color: _tabController.index == 0 
-                        ? (_isAdmin ? const Color(0xFFFFE082) : const Color(0xFFB4DBFF))
+                    color: _tabController.index == 0
+                        ? (_isAdmin
+                              ? const Color(0xFFFFE082)
+                              : const Color(0xFFB4DBFF))
                         : Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    shadows: _tabController.index == 0 ? [
-                      BoxShadow(
-                        color: Color(0x3F000000),
-                        blurRadius: 4,
-                        offset: Offset(0, 4),
-                        spreadRadius: 0,
-                      )
-                    ] : [],
+                    shadows: _tabController.index == 0
+                        ? [
+                            BoxShadow(
+                              color: Color(0x3F000000),
+                              blurRadius: 4,
+                              offset: Offset(0, 4),
+                              spreadRadius: 0,
+                            ),
+                          ]
+                        : [],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -211,7 +229,9 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
                         '등록된 민원',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: _tabController.index == 0 ? const Color(0xFF1F2024) : const Color(0xFF71727A),
+                          color: _tabController.index == 0
+                              ? const Color(0xFF1F2024)
+                              : const Color(0xFF71727A),
                           fontSize: 14,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w700,
@@ -226,22 +246,29 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
               child: GestureDetector(
                 onTap: () => _onTabChanged(1),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: ShapeDecoration(
-                    color: _tabController.index == 1 
-                        ? (_isAdmin ? const Color(0xFFFFE082) : const Color(0xFFB4DBFF))
+                    color: _tabController.index == 1
+                        ? (_isAdmin
+                              ? const Color(0xFFFFE082)
+                              : const Color(0xFFB4DBFF))
                         : Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    shadows: _tabController.index == 1 ? [
-                      BoxShadow(
-                        color: Color(0x3F000000),
-                        blurRadius: 4,
-                        offset: Offset(0, 4),
-                        spreadRadius: 0,
-                      )
-                    ] : [],
+                    shadows: _tabController.index == 1
+                        ? [
+                            BoxShadow(
+                              color: Color(0x3F000000),
+                              blurRadius: 4,
+                              offset: Offset(0, 4),
+                              spreadRadius: 0,
+                            ),
+                          ]
+                        : [],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -252,7 +279,9 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
                         '진행중',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: _tabController.index == 1 ? const Color(0xFF1F2024) : const Color(0xFF71727A),
+                          color: _tabController.index == 1
+                              ? const Color(0xFF1F2024)
+                              : const Color(0xFF71727A),
                           fontSize: 14,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w700,
@@ -267,22 +296,29 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
               child: GestureDetector(
                 onTap: () => _onTabChanged(2),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: ShapeDecoration(
-                    color: _tabController.index == 2 
-                        ? (_isAdmin ? const Color(0xFFFFE082) : const Color(0xFFB4DBFF))
+                    color: _tabController.index == 2
+                        ? (_isAdmin
+                              ? const Color(0xFFFFE082)
+                              : const Color(0xFFB4DBFF))
                         : Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    shadows: _tabController.index == 2 ? [
-                      BoxShadow(
-                        color: Color(0x3F000000),
-                        blurRadius: 4,
-                        offset: Offset(0, 4),
-                        spreadRadius: 0,
-                      )
-                    ] : [],
+                    shadows: _tabController.index == 2
+                        ? [
+                            BoxShadow(
+                              color: Color(0x3F000000),
+                              blurRadius: 4,
+                              offset: Offset(0, 4),
+                              spreadRadius: 0,
+                            ),
+                          ]
+                        : [],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -293,7 +329,9 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
                         '답변 완료',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: _tabController.index == 2 ? const Color(0xFF1F2024) : const Color(0xFF71727A),
+                          color: _tabController.index == 2
+                              ? const Color(0xFF1F2024)
+                              : const Color(0xFF71727A),
                           fontSize: 14,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w700,
@@ -333,26 +371,16 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: Colors.red[400],
-                ),
+                Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
                 const SizedBox(height: 16),
                 Text(
                   '데이터를 불러오는 중 오류가 발생했습니다.',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   '${snapshot.error}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.red[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.red[600]),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -379,18 +407,11 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.inbox_outlined,
-                  size: 64,
-                  color: Colors.grey[400],
-                ),
+                Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[400]),
                 const SizedBox(height: 16),
                 Text(
                   _getEmptyMessage(status),
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -402,10 +423,7 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
           itemCount: inquiries.length,
           itemBuilder: (context, index) {
             final inquiry = inquiries[index];
-            return InquiryCard(
-              inquiry: inquiry,
-              isAdmin: _isAdmin,
-            );
+            return InquiryCard(inquiry: inquiry, isAdmin: _isAdmin);
           },
         );
       },
@@ -426,52 +444,6 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
     }
   }
 
-
-
-
-
-  /// 검색 다이얼로그
-  void _showSearchDialog() {
-    final searchController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('민원 검색'),
-        content: TextField(
-          controller: searchController,
-          decoration: const InputDecoration(
-            labelText: '검색어를 입력하세요',
-            border: OutlineInputBorder(),
-            prefixIcon: Icon(Icons.search),
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('취소'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (searchController.text.trim().isNotEmpty) {
-                Navigator.of(context).pop();
-                // TODO: 검색 기능 구현
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('검색어: ${searchController.text.trim()}'),
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-              }
-            },
-            child: const Text('검색'),
-          ),
-        ],
-      ),
-    );
-  }
-
   /// 기존 이메일 형태 userName 수정 (앱 시작 시 한 번만 실행)
   void _fixExistingUserNames() async {
     try {
@@ -479,5 +451,15 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
     } catch (e) {
       print('Error fixing existing usernames: $e');
     }
+  }
+
+  /// 검색 바텀시트 표시
+  void _showSearchBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const InquirySearchBottomSheet(),
+    );
   }
 }

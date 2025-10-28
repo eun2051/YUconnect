@@ -129,10 +129,10 @@ class _RegisterStep2ScreenState extends State<RegisterStep2Screen> {
             onTimeout: () =>
                 throw Exception('저장 시간이 너무 오래 걸립니다. 네트워크 상태를 확인해 주세요.'),
           );
-      
+
       // 사용자 프로필 서비스에도 저장 (민원 시스템용)
       await userProfileService.saveUserProfile(_nameController.text.trim());
-          
+
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(
         context,

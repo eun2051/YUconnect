@@ -241,7 +241,7 @@ class NewHomeScreenState extends State<NewHomeScreen> {
       // 총학생회 행사 탭인 경우 특별한 레이아웃
       return const StudentCouncilEventsSection();
     }
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.only(top: 24),
@@ -384,7 +384,8 @@ class NewHomeScreenState extends State<NewHomeScreen> {
         color: const Color(0xFFF7F8FD),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
-      child: IntrinsicHeight( // 내부 콘텐츠 높이에 맞춤
+      child: IntrinsicHeight(
+        // 내부 콘텐츠 높이에 맞춤
         child: Row(
           children: [
             Container(
@@ -400,81 +401,81 @@ class NewHomeScreenState extends State<NewHomeScreen> {
                 child: Icon(Icons.link, color: Color(0xFF7BAAF7), size: 28),
               ),
             ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: TextStyle(
-                            color: const Color(0xFF1F2024),
-                            fontSize: 16,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w700,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Text(
-                              date,
-                              style: TextStyle(
-                                color: const Color(0xFF71727A),
-                                fontSize: 14,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 0.12,
-                              ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: TextStyle(
+                              color: const Color(0xFF1F2024),
+                              fontSize: 16,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w700,
                             ),
-                            if (status != null) ...[
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Text(
+                                date,
+                                style: TextStyle(
+                                  color: const Color(0xFF71727A),
+                                  fontSize: 14,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: 0.12,
                                 ),
-                                decoration: BoxDecoration(
-                                  color: status == '완료'
-                                      ? Colors.green
-                                      : Colors.orange,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  status,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w600,
+                              ),
+                              if (status != null) ...[
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: status == '완료'
+                                        ? Colors.green
+                                        : Colors.orange,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    status,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ],
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 16),
-                    child: Icon(
-                      Icons.chevron_right,
-                      color: Color(0xFFB0B5C3),
-                      size: 28,
+                    const Padding(
+                      padding: EdgeInsets.only(left: 16),
+                      child: Icon(
+                        Icons.chevron_right,
+                        color: Color(0xFFB0B5C3),
+                        size: 28,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
         ), // IntrinsicHeight 닫기
       ),
     );

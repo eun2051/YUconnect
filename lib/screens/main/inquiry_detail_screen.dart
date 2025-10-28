@@ -130,31 +130,18 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () => _updateStatus(InquiryStatus.completed),
+                    onPressed: _showResponseDialog,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    child: const Text('완료 처리'),
+                    child: const Text('답변 작성'),
                   ),
                 ),
               ],
             ],
           ),
-          if (_inquiry.status != InquiryStatus.completed) ...[
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: _showResponseDialog,
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                child: const Text('답변 작성'),
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -167,12 +154,12 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
       setState(() {
         _inquiry = _inquiry.copyWith(status: newStatus);
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              newStatus == InquiryStatus.inProgress 
+              newStatus == InquiryStatus.inProgress
                   ? '민원 처리를 시작했습니다.'
                   : '민원이 완료 처리되었습니다.',
             ),
@@ -207,7 +194,9 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
 
   /// 답변 작성 다이얼로그
   void _showResponseDialog() {
-    final responseController = TextEditingController(text: _inquiry.adminResponse ?? '');
+    final responseController = TextEditingController(
+      text: _inquiry.adminResponse ?? '',
+    );
 
     showDialog(
       context: context,
@@ -234,18 +223,25 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                     _inquiry.id,
                     responseController.text.trim(),
                   );
-                  
+
+                  // 답변 저장과 동시에 상태를 완료로 변경
+                  await _inquiryRepository.updateInquiryStatus(
+                    _inquiry.id,
+                    InquiryStatus.completed,
+                  );
+
                   setState(() {
                     _inquiry = _inquiry.copyWith(
                       adminResponse: responseController.text.trim(),
+                      status: InquiryStatus.completed,
                     );
                   });
-                  
+
                   if (mounted) {
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('답변이 성공적으로 저장되었습니다.'),
+                        content: Text('답변이 저장되고 민원이 완료 처리되었습니다.'),
                         backgroundColor: Colors.green,
                       ),
                     );
@@ -329,17 +325,17 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                         .collection('inquiries')
                         .doc(_inquiry.id)
                         .update({
-                      'content': contentController.text.trim(),
-                      'category': selectedCategory.value,
-                      'updatedAt': Timestamp.now(),
-                    });
-                    
+                          'content': contentController.text.trim(),
+                          'category': selectedCategory.value,
+                          'updatedAt': Timestamp.now(),
+                        });
+
                     // 로컬 상태 업데이트
                     final updatedInquiry = _inquiry.copyWith(
                       content: contentController.text.trim(),
                       category: selectedCategory,
                     );
-                    
+
                     if (mounted) {
                       setState(() {
                         _inquiry = updatedInquiry;
@@ -388,7 +384,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
             onPressed: () async {
               try {
                 await _inquiryRepository.deleteInquiry(_inquiry.id);
-                
+
                 if (mounted) {
                   Navigator.of(context).pop(); // 다이얼로그 닫기
                   Navigator.of(context).pop(); // 상세 화면 닫기
@@ -470,15 +466,12 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                 const Spacer(),
                 Text(
                   _formatDate(_inquiry.createdAt),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // 기본 정보
             Container(
               padding: const EdgeInsets.all(16),
@@ -526,7 +519,10 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                       ),
                       const Spacer(),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.blue[100],
                           borderRadius: BorderRadius.circular(6),
@@ -546,7 +542,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // 민원 내용
             Text(
               '민원 내용',
@@ -566,15 +562,13 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
               ),
               child: Text(
                 _inquiry.content,
-                style: const TextStyle(
-                  fontSize: 16,
-                  height: 1.5,
-                ),
+                style: const TextStyle(fontSize: 16, height: 1.5),
               ),
             ),
-            
+
             // 답변 (있을 경우)
-            if (_inquiry.adminResponse != null && _inquiry.adminResponse!.isNotEmpty) ...[
+            if (_inquiry.adminResponse != null &&
+                _inquiry.adminResponse!.isNotEmpty) ...[
               const SizedBox(height: 24),
               Text(
                 '관리자 답변',
@@ -595,24 +589,18 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                 ),
                 child: Text(
                   _inquiry.adminResponse!,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    height: 1.5,
-                  ),
+                  style: const TextStyle(fontSize: 16, height: 1.5),
                 ),
               ),
               if (_inquiry.responseAt != null) ...[
                 const SizedBox(height: 8),
                 Text(
                   '답변일: ${_formatDate(_inquiry.responseAt!)}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
             ],
-            
+
             // 관리자 액션 버튼들
             _buildAdminActions(),
           ],

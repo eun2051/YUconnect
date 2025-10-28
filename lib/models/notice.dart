@@ -35,7 +35,8 @@ class Notice {
       id: doc.id,
       title: data['title'] ?? '',
       content: data['content'] ?? '',
-      publishDate: (data['publishDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      publishDate:
+          (data['publishDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
       author: data['author'] ?? '',
       department: data['department'] ?? '',
       attachments: List<String>.from(data['attachments'] ?? []),

@@ -12,17 +12,14 @@ class InquiryRepository {
 
   /// 모든 민원 조회 (관리자용)
   Stream<List<Inquiry>> getAllInquiries() {
-    return _firestore
-        .collection(_collection)
-        .snapshots()
-        .map((snapshot) {
-          final inquiries = snapshot.docs
-              .map((doc) => Inquiry.fromFirestore(doc))
-              .toList();
-          // 클라이언트 측에서 정렬
-          inquiries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-          return inquiries;
-        });
+    return _firestore.collection(_collection).snapshots().map((snapshot) {
+      final inquiries = snapshot.docs
+          .map((doc) => Inquiry.fromFirestore(doc))
+          .toList();
+      // 클라이언트 측에서 정렬
+      inquiries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return inquiries;
+    });
   }
 
   /// 현재 사용자의 민원 조회 (사용자 모드용)
@@ -31,7 +28,7 @@ class InquiryRepository {
     if (user == null) {
       return Stream.value([]);
     }
-    
+
     return _firestore
         .collection(_collection)
         .where('userId', isEqualTo: user.uid)
@@ -53,9 +50,10 @@ class InquiryRepository {
         .where('userId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => Inquiry.fromFirestore(doc))
-            .toList());
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => Inquiry.fromFirestore(doc)).toList(),
+        );
   }
 
   /// 사용자 이름 조회
@@ -69,19 +67,18 @@ class InquiryRepository {
   }
 
   /// 민원 상태 업데이트
-  Future<void> updateInquiryStatus(String inquiryId, InquiryStatus status) async {
-    await _firestore
-        .collection(_collection)
-        .doc(inquiryId)
-        .update({'status': status.value});
+  Future<void> updateInquiryStatus(
+    String inquiryId,
+    InquiryStatus status,
+  ) async {
+    await _firestore.collection(_collection).doc(inquiryId).update({
+      'status': status.value,
+    });
   }
 
   /// 민원에 답변 추가
   Future<void> addResponse(String inquiryId, String response) async {
-    await _firestore
-        .collection(_collection)
-        .doc(inquiryId)
-        .update({
+    await _firestore.collection(_collection).doc(inquiryId).update({
       'adminResponse': response,
       'status': InquiryStatus.completed.value,
       'responseAt': Timestamp.now(),
@@ -109,13 +106,17 @@ class InquiryRepository {
         .where('status', isEqualTo: status)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => Inquiry.fromFirestore(doc))
-            .toList());
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => Inquiry.fromFirestore(doc)).toList(),
+        );
   }
 
   /// 특정 사용자의 상태별 민원 조회
-  Stream<List<Inquiry>> getInquiriesByUserAndStatus(String userId, String status) {
+  Stream<List<Inquiry>> getInquiriesByUserAndStatus(
+    String userId,
+    String status,
+  ) {
     return _firestore
         .collection(_collection)
         .where('userId', isEqualTo: userId)
@@ -132,10 +133,7 @@ class InquiryRepository {
 
   /// 민원 답변 업데이트
   Future<void> updateInquiryResponse(String inquiryId, String response) async {
-    await _firestore
-        .collection(_collection)
-        .doc(inquiryId)
-        .update({
+    await _firestore.collection(_collection).doc(inquiryId).update({
       'adminResponse': response,
       'responseAt': Timestamp.now(),
       'updatedAt': Timestamp.now(),
@@ -146,22 +144,22 @@ class InquiryRepository {
   Future<void> fixEmailUserNames() async {
     try {
       final snapshot = await _firestore.collection(_collection).get();
-      
+
       for (final doc in snapshot.docs) {
         final data = doc.data();
         final userName = data['userName'] as String?;
         final userId = data['userId'] as String?;
-        
+
         if (userName != null && userId != null && userName.contains('@')) {
           // 실제 사용자 이름 조회
           final actualUserName = await getUserName(userId);
-          
+
           // 민원 문서 업데이트
           await doc.reference.update({
             'userName': actualUserName,
             'updatedAt': Timestamp.now(),
           });
-          
+
           print('Updated inquiry ${doc.id}: $userName -> $actualUserName');
         }
       }

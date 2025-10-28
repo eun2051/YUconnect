@@ -5,7 +5,8 @@ class ModeSelectionBottomSheet extends StatefulWidget {
   const ModeSelectionBottomSheet({super.key});
 
   @override
-  State<ModeSelectionBottomSheet> createState() => _ModeSelectionBottomSheetState();
+  State<ModeSelectionBottomSheet> createState() =>
+      _ModeSelectionBottomSheetState();
 }
 
 class _ModeSelectionBottomSheetState extends State<ModeSelectionBottomSheet> {
@@ -29,7 +30,7 @@ class _ModeSelectionBottomSheetState extends State<ModeSelectionBottomSheet> {
     // TODO: SharedPreferences에 선택된 모드 저장
     // TODO: 테마 변경 적용
     Navigator.pop(context);
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(_isDarkMode ? '다크 모드로 변경되었습니다.' : '라이트 모드로 변경되었습니다.'),
@@ -67,7 +68,7 @@ class _ModeSelectionBottomSheetState extends State<ModeSelectionBottomSheet> {
               ),
             ),
           ),
-          
+
           // 닫기 버튼
           Positioned(
             left: 311,
@@ -81,15 +82,11 @@ class _ModeSelectionBottomSheetState extends State<ModeSelectionBottomSheet> {
                   color: Color(0xFFE6E6E6),
                   shape: OvalBorder(),
                 ),
-                child: const Icon(
-                  Icons.close,
-                  size: 18,
-                  color: Colors.grey,
-                ),
+                child: const Icon(Icons.close, size: 18, color: Colors.grey),
               ),
             ),
           ),
-          
+
           // 다크 모드 옵션
           Positioned(
             left: 18,
@@ -110,11 +107,13 @@ class _ModeSelectionBottomSheetState extends State<ModeSelectionBottomSheet> {
                             width: 34.40,
                             height: 34.40,
                             decoration: ShapeDecoration(
-                              color: _isDarkMode 
-                                  ? const Color(0xFFB4DBFF) 
+                              color: _isDarkMode
+                                  ? const Color(0xFFB4DBFF)
                                   : Colors.grey[200],
                               shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(999)),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(999),
+                                ),
                               ),
                             ),
                           ),
@@ -128,7 +127,9 @@ class _ModeSelectionBottomSheetState extends State<ModeSelectionBottomSheet> {
                             child: Icon(
                               Icons.dark_mode,
                               size: 20,
-                              color: _isDarkMode ? const Color(0xFF006FFD) : Colors.grey,
+                              color: _isDarkMode
+                                  ? const Color(0xFF006FFD)
+                                  : Colors.grey,
                             ),
                           ),
                         ),
@@ -149,7 +150,7 @@ class _ModeSelectionBottomSheetState extends State<ModeSelectionBottomSheet> {
               ),
             ),
           ),
-          
+
           // 라이트 모드 옵션
           Positioned(
             left: 18,
@@ -170,11 +171,13 @@ class _ModeSelectionBottomSheetState extends State<ModeSelectionBottomSheet> {
                             width: 34.40,
                             height: 34.40,
                             decoration: ShapeDecoration(
-                              color: !_isDarkMode 
-                                  ? const Color(0xFFB4DBFF) 
+                              color: !_isDarkMode
+                                  ? const Color(0xFFB4DBFF)
                                   : Colors.grey[200],
                               shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(999)),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(999),
+                                ),
                               ),
                             ),
                           ),
@@ -188,7 +191,9 @@ class _ModeSelectionBottomSheetState extends State<ModeSelectionBottomSheet> {
                             child: Icon(
                               Icons.light_mode,
                               size: 20,
-                              color: !_isDarkMode ? const Color(0xFF006FFD) : Colors.grey,
+                              color: !_isDarkMode
+                                  ? const Color(0xFF006FFD)
+                                  : Colors.grey,
                             ),
                           ),
                         ),
@@ -209,7 +214,7 @@ class _ModeSelectionBottomSheetState extends State<ModeSelectionBottomSheet> {
               ),
             ),
           ),
-          
+
           // 확인 버튼
           Positioned(
             left: 19,

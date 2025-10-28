@@ -21,7 +21,7 @@ class _InquiryRegisterScreenState extends State<InquiryRegisterScreen> {
   final _inquiryRepository = InquiryRepository();
   final _userProfileService = UserProfileService();
   final _imagePicker = ImagePicker();
-  
+
   String? _selectedCategory;
   InquiryCategory? _selectedCategoryEnum;
   final List<File> _selectedImages = [];
@@ -29,11 +29,31 @@ class _InquiryRegisterScreenState extends State<InquiryRegisterScreen> {
 
   // 카테고리 목록
   final List<Map<String, dynamic>> _categories = [
-    {'name': '학생생활', 'description': '[동아리 / 학생회 등]', 'category': InquiryCategory.living},
-    {'name': '안전 및 보안', 'description': '[건물 문제 / 분실물 등]', 'category': InquiryCategory.facility},
-    {'name': '기숙사', 'description': '[시설 / 보안 / 생활 등]', 'category': InquiryCategory.living},
-    {'name': '행정/학과', 'description': '[행정 오류 / 학과 문의 등]', 'category': InquiryCategory.academic},
-    {'name': '기타 건의', 'description': '[기타 모든 건의사항]', 'category': InquiryCategory.other},
+    {
+      'name': '학생생활',
+      'description': '[동아리 / 학생회 등]',
+      'category': InquiryCategory.living,
+    },
+    {
+      'name': '안전 및 보안',
+      'description': '[건물 문제 / 분실물 등]',
+      'category': InquiryCategory.facility,
+    },
+    {
+      'name': '기숙사',
+      'description': '[시설 / 보안 / 생활 등]',
+      'category': InquiryCategory.living,
+    },
+    {
+      'name': '행정/학과',
+      'description': '[행정 오류 / 학과 문의 등]',
+      'category': InquiryCategory.academic,
+    },
+    {
+      'name': '기타 건의',
+      'description': '[기타 모든 건의사항]',
+      'category': InquiryCategory.other,
+    },
   ];
 
   @override
@@ -71,16 +91,16 @@ class _InquiryRegisterScreenState extends State<InquiryRegisterScreen> {
         maxHeight: 1024,
         imageQuality: 80,
       );
-      
+
       if (image != null) {
         setState(() {
           _selectedImages.add(File(image.path));
         });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('이미지를 선택하는 중 오류가 발생했습니다: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('이미지를 선택하는 중 오류가 발생했습니다: $e')));
     }
   }
 
@@ -95,9 +115,9 @@ class _InquiryRegisterScreenState extends State<InquiryRegisterScreen> {
   Future<void> _submitInquiry() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedCategoryEnum == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('카테고리를 선택해주세요.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('카테고리를 선택해주세요.')));
       return;
     }
 
@@ -113,7 +133,8 @@ class _InquiryRegisterScreenState extends State<InquiryRegisterScreen> {
       final userName = await _userProfileService.getUserName(user.uid);
 
       // 제목과 내용을 합쳐서 content로 저장
-      final fullContent = '제목: ${_titleController.text.trim()}\n\n${_contentController.text.trim()}';
+      final fullContent =
+          '제목: ${_titleController.text.trim()}\n\n${_contentController.text.trim()}';
 
       final inquiry = Inquiry(
         id: '',
@@ -129,16 +150,16 @@ class _InquiryRegisterScreenState extends State<InquiryRegisterScreen> {
       await _inquiryRepository.addInquiry(inquiry);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('민원이 성공적으로 등록되었습니다.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('민원이 성공적으로 등록되었습니다.')));
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('민원 등록 중 오류가 발생했습니다: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('민원 등록 중 오류가 발생했습니다: $e')));
       }
     } finally {
       if (mounted) {
@@ -193,21 +214,18 @@ class _InquiryRegisterScreenState extends State<InquiryRegisterScreen> {
                 ),
               ),
               const SizedBox(height: 24), // 12에서 24로 증가
-              
               // 카테고리 선택
               _buildInputSection(
                 label: '카테고리',
                 child: _buildCategorySelector(),
               ),
               const SizedBox(height: 24), // 12에서 24로 증가
-              
               // 사진/동영상 첨부
               _buildInputSection(
                 label: '사진/동영상 첨부',
                 child: _buildImageUploadSection(),
               ),
               const SizedBox(height: 24), // 12에서 24로 증가
-              
               // 민원 내용
               _buildInputSection(
                 label: '민원 내용',
@@ -225,7 +243,6 @@ class _InquiryRegisterScreenState extends State<InquiryRegisterScreen> {
                 ),
               ),
               const SizedBox(height: 32), // 24에서 32로 증가
-              
               // 등록 버튼
               SizedBox(
                 width: double.infinity,
@@ -331,7 +348,7 @@ class _InquiryRegisterScreenState extends State<InquiryRegisterScreen> {
               child: Text(
                 _selectedCategory ?? '카테고리를 선택해주세요.',
                 style: TextStyle(
-                  color: _selectedCategory != null 
+                  color: _selectedCategory != null
                       ? const Color(0xFF2E3036)
                       : const Color(0xFF8F9098),
                   fontSize: 14,
@@ -488,7 +505,12 @@ class _CategoryBottomSheetState extends State<_CategoryBottomSheet> {
         children: [
           // 헤더
           Padding(
-            padding: const EdgeInsets.fromLTRB(27, 24, 27, 16), // 상단 29에서 24로, 하단 20에서 16으로 줄임
+            padding: const EdgeInsets.fromLTRB(
+              27,
+              24,
+              27,
+              16,
+            ), // 상단 29에서 24로, 하단 20에서 16으로 줄임
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -510,22 +532,33 @@ class _CategoryBottomSheetState extends State<_CategoryBottomSheet> {
                       color: Color(0xFFE6E6E6),
                       shape: OvalBorder(),
                     ),
-                    child: const Icon(Icons.close, size: 18, color: Colors.grey),
+                    child: const Icon(
+                      Icons.close,
+                      size: 18,
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          
+
           // 카테고리 목록
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 12, 24, 0), // 위쪽에 12px 패딩으로 헤더와 간격 조정
+              padding: const EdgeInsets.fromLTRB(
+                24,
+                12,
+                24,
+                0,
+              ), // 위쪽에 12px 패딩으로 헤더와 간격 조정
               child: Column(
                 children: widget.categories.map((category) {
                   final isSelected = _tempSelectedCategory == category['name'];
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 16), // 4에서 16으로 다시 넓힘
+                    padding: const EdgeInsets.only(
+                      bottom: 16,
+                    ), // 4에서 16으로 다시 넓힘
                     child: GestureDetector(
                       onTap: () {
                         setState(() {
@@ -544,8 +577,8 @@ class _CategoryBottomSheetState extends State<_CategoryBottomSheet> {
                               shape: RoundedRectangleBorder(
                                 side: BorderSide(
                                   width: 1,
-                                  color: isSelected 
-                                      ? const Color(0xFF0078D4) 
+                                  color: isSelected
+                                      ? const Color(0xFF0078D4)
                                       : const Color(0xFFE6E6E6),
                                 ),
                                 borderRadius: BorderRadius.circular(20),
@@ -560,7 +593,7 @@ class _CategoryBottomSheetState extends State<_CategoryBottomSheet> {
                                 : null,
                           ),
                           const SizedBox(width: 12),
-                          
+
                           // 카테고리 이름과 설명
                           Expanded(
                             child: Column(
@@ -572,7 +605,8 @@ class _CategoryBottomSheetState extends State<_CategoryBottomSheet> {
                                     color: Color(0xFF4B4B4B),
                                     fontSize: 18, // 16에서 18로 폰트 크기 증가
                                     fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w500, // w400에서 w500으로 조금 더 굵게
+                                    fontWeight: FontWeight
+                                        .w500, // w400에서 w500으로 조금 더 굵게
                                   ),
                                 ),
                                 Text(
@@ -596,46 +630,55 @@ class _CategoryBottomSheetState extends State<_CategoryBottomSheet> {
               ),
             ),
           ),
-          
+
           // 확인 버튼
           Transform.translate(
             offset: const Offset(0, -24), // 버튼을 위로 24px 더 강하게 끌어올림
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 32), // 위 패딩을 4에서 0으로 완전히 제거
-            child: GestureDetector(
-              onTap: () {
-                if (_tempSelectedCategory != null && _tempSelectedCategoryEnum != null) {
-                  widget.onCategorySelected(_tempSelectedCategory!, _tempSelectedCategoryEnum!);
-                  Navigator.pop(context);
-                }
-              },
-              child: Container(
-                width: double.infinity,
-                height: 50,
-                decoration: ShapeDecoration(
-                  color: _tempSelectedCategory != null 
-                      ? const Color(0xFF006FFD)
-                      : const Color(0xFFE6E6E6),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              padding: const EdgeInsets.fromLTRB(
+                24,
+                0,
+                24,
+                32,
+              ), // 위 패딩을 4에서 0으로 완전히 제거
+              child: GestureDetector(
+                onTap: () {
+                  if (_tempSelectedCategory != null &&
+                      _tempSelectedCategoryEnum != null) {
+                    widget.onCategorySelected(
+                      _tempSelectedCategory!,
+                      _tempSelectedCategoryEnum!,
+                    );
+                    Navigator.pop(context);
+                  }
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: ShapeDecoration(
+                    color: _tempSelectedCategory != null
+                        ? const Color(0xFF006FFD)
+                        : const Color(0xFFE6E6E6),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                ),
-                child: Center(
-                  child: Text(
-                    '확인',
-                    style: TextStyle(
-                      color: _tempSelectedCategory != null 
-                          ? Colors.white 
-                          : const Color(0xFF8F9098),
-                      fontSize: 18,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
+                  child: Center(
+                    child: Text(
+                      '확인',
+                      style: TextStyle(
+                        color: _tempSelectedCategory != null
+                            ? Colors.white
+                            : const Color(0xFF8F9098),
+                        fontSize: 18,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
           ),
         ],
       ),

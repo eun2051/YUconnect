@@ -12,82 +12,103 @@ class AcademicEventRepository {
         .collection(_collection)
         .orderBy('startDate', descending: false)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => AcademicEvent.fromFirestore(doc))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => AcademicEvent.fromFirestore(doc))
+              .toList(),
+        );
   }
 
   /// 특정 연도의 학사일정 조회
   Stream<List<AcademicEvent>> getEventsByYear(int year) {
     final startOfYear = DateTime(year, 1, 1);
     final endOfYear = DateTime(year + 1, 1, 1);
-    
+
     return _firestore
         .collection(_collection)
-        .where('startDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfYear))
+        .where(
+          'startDate',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startOfYear),
+        )
         .where('startDate', isLessThan: Timestamp.fromDate(endOfYear))
         .orderBy('startDate', descending: false)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => AcademicEvent.fromFirestore(doc))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => AcademicEvent.fromFirestore(doc))
+              .toList(),
+        );
   }
 
   /// 특정 월의 학사일정 조회
   Stream<List<AcademicEvent>> getEventsByMonth(int year, int month) {
     final startOfMonth = DateTime(year, month, 1);
     final endOfMonth = DateTime(year, month + 1, 1);
-    
+
     return _firestore
         .collection(_collection)
-        .where('startDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfMonth))
+        .where(
+          'startDate',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startOfMonth),
+        )
         .where('startDate', isLessThan: Timestamp.fromDate(endOfMonth))
         .orderBy('startDate', descending: false)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => AcademicEvent.fromFirestore(doc))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => AcademicEvent.fromFirestore(doc))
+              .toList(),
+        );
   }
 
   /// 특정 날짜의 학사일정 조회
   Stream<List<AcademicEvent>> getEventsByDate(DateTime date) {
-    return _firestore
-        .collection(_collection)
-        .snapshots()
-        .map((snapshot) {
-          final events = snapshot.docs
-              .map((doc) => AcademicEvent.fromFirestore(doc))
-              .where((event) => event.containsDate(date))
-              .toList();
-          
-          events.sort((a, b) => a.startDate.compareTo(b.startDate));
-          return events;
-        });
+    return _firestore.collection(_collection).snapshots().map((snapshot) {
+      final events = snapshot.docs
+          .map((doc) => AcademicEvent.fromFirestore(doc))
+          .where((event) => event.containsDate(date))
+          .toList();
+
+      events.sort((a, b) => a.startDate.compareTo(b.startDate));
+      return events;
+    });
   }
 
   /// 카테고리별 학사일정 조회
-  Stream<List<AcademicEvent>> getEventsByCategory(AcademicEventCategory category) {
+  Stream<List<AcademicEvent>> getEventsByCategory(
+    AcademicEventCategory category,
+  ) {
     return _firestore
         .collection(_collection)
         .where('category', isEqualTo: category.value)
         .orderBy('startDate', descending: false)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => AcademicEvent.fromFirestore(doc))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => AcademicEvent.fromFirestore(doc))
+              .toList(),
+        );
   }
 
   /// 특정 기간의 학사일정 조회
-  Stream<List<AcademicEvent>> getEventsByDateRange(DateTime startDate, DateTime endDate) {
+  Stream<List<AcademicEvent>> getEventsByDateRange(
+    DateTime startDate,
+    DateTime endDate,
+  ) {
     return _firestore
         .collection(_collection)
-        .where('startDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+        .where(
+          'startDate',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startDate),
+        )
         .where('startDate', isLessThanOrEqualTo: Timestamp.fromDate(endDate))
         .orderBy('startDate', descending: false)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => AcademicEvent.fromFirestore(doc))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => AcademicEvent.fromFirestore(doc))
+              .toList(),
+        );
   }
 
   /// 학사일정 추가
@@ -122,7 +143,7 @@ class AcademicEventRepository {
     final now = DateTime.now();
     final currentYear = now.year;
     final currentMonth = now.month;
-    
+
     // 기존 데이터 먼저 삭제
     try {
       final snapshot = await _firestore.collection(_collection).get();
@@ -132,7 +153,7 @@ class AcademicEventRepository {
     } catch (e) {
       print('기존 데이터 삭제 오류: $e');
     }
-    
+
     final sampleEvents = [
       // 현재 달의 이벤트들
       AcademicEvent(
@@ -223,7 +244,7 @@ class AcademicEventRepository {
     for (final event in sampleEvents) {
       await addEvent(event);
     }
-    
+
     print('샘플 데이터 ${sampleEvents.length}개가 추가되었습니다.');
   }
 }

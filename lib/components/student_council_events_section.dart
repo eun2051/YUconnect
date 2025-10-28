@@ -8,9 +8,7 @@ class StudentCouncilEventsSection extends StatelessWidget {
   void _navigateToEventRegistration(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const EventRegistrationScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const EventRegistrationScreen()),
     );
   }
 
@@ -113,7 +111,10 @@ class StudentCouncilEventsSection extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => _navigateToEventRegistration(context),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: ShapeDecoration(
                       color: const Color(0xFFEAF2FF),
                       shape: RoundedRectangleBorder(
@@ -168,9 +169,7 @@ class StudentCouncilEventsSection extends StatelessWidget {
       width: 250,
       decoration: ShapeDecoration(
         color: const Color(0xFFF7F8FD),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,18 +189,17 @@ class StudentCouncilEventsSection extends StatelessWidget {
               children: [
                 // 중앙 아이콘
                 const Center(
-                  child: Icon(
-                    Icons.event,
-                    color: Color(0xFFB3DAFF),
-                    size: 32,
-                  ),
+                  child: Icon(Icons.event, color: Color(0xFFB3DAFF), size: 32),
                 ),
                 // 우상단 날짜 태그
                 Positioned(
                   right: 10,
                   top: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 6,
+                    ),
                     decoration: ShapeDecoration(
                       color: const Color(0xFF006FFD),
                       shape: RoundedRectangleBorder(
@@ -264,7 +262,10 @@ class StudentCouncilEventsSection extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: ShapeDecoration(
                     shape: RoundedRectangleBorder(
                       side: const BorderSide(

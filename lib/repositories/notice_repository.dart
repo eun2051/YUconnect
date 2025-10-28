@@ -18,15 +18,21 @@ class NoticeRepository {
         .limit(limit * 2); // 더 많이 가져와서 필터링
 
     return query.snapshots().map((snapshot) {
-      List<Notice> notices = snapshot.docs.map((doc) => Notice.fromFirestore(doc)).toList();
-      
+      List<Notice> notices = snapshot.docs
+          .map((doc) => Notice.fromFirestore(doc))
+          .toList();
+
       // 클라이언트 사이드에서 필터링
       if (category != null && category.isNotEmpty) {
-        notices = notices.where((notice) => notice.category == category).toList();
+        notices = notices
+            .where((notice) => notice.category == category)
+            .toList();
       }
 
       if (department != null && department.isNotEmpty) {
-        notices = notices.where((notice) => notice.department == department).toList();
+        notices = notices
+            .where((notice) => notice.department == department)
+            .toList();
       }
 
       // 제한된 개수만 반환
@@ -42,12 +48,16 @@ class NoticeRepository {
         .limit(limit * 5) // 더 많이 가져와서 필터링
         .snapshots()
         .map((snapshot) {
-      final allNotices = snapshot.docs.map((doc) => Notice.fromFirestore(doc)).toList();
-      // 클라이언트 사이드에서 중요 공지만 필터링
-      final importantNotices = allNotices.where((notice) => notice.isImportant).toList();
-      // 제한된 개수만 반환
-      return importantNotices.take(limit).toList();
-    });
+          final allNotices = snapshot.docs
+              .map((doc) => Notice.fromFirestore(doc))
+              .toList();
+          // 클라이언트 사이드에서 중요 공지만 필터링
+          final importantNotices = allNotices
+              .where((notice) => notice.isImportant)
+              .toList();
+          // 제한된 개수만 반환
+          return importantNotices.take(limit).toList();
+        });
   }
 
   /// 특정 공지사항 가져오기
@@ -67,7 +77,9 @@ class NoticeRepository {
   /// 공지사항 추가
   Future<String?> addNotice(Notice notice) async {
     try {
-      final docRef = await _firestore.collection(_collection).add(notice.toFirestore());
+      final docRef = await _firestore
+          .collection(_collection)
+          .add(notice.toFirestore());
       return docRef.id;
     } catch (e) {
       print('공지사항 추가 오류: $e');
@@ -83,16 +95,23 @@ class NoticeRepository {
         .limit(limit * 2) // 더 많이 가져와서 필터링
         .snapshots()
         .map((snapshot) {
-      final allNotices = snapshot.docs.map((doc) => Notice.fromFirestore(doc)).toList();
-      // 클라이언트 사이드에서 학과 공지 제외
-      final universityNotices = allNotices.where((notice) => notice.category != '학과').toList();
-      // 제한된 개수만 반환
-      return universityNotices.take(limit).toList();
-    });
+          final allNotices = snapshot.docs
+              .map((doc) => Notice.fromFirestore(doc))
+              .toList();
+          // 클라이언트 사이드에서 학과 공지 제외
+          final universityNotices = allNotices
+              .where((notice) => notice.category != '학과')
+              .toList();
+          // 제한된 개수만 반환
+          return universityNotices.take(limit).toList();
+        });
   }
 
   /// 학과 공지사항 가져오기
-  Stream<List<Notice>> getDepartmentNotices({String? department, int limit = 20}) {
+  Stream<List<Notice>> getDepartmentNotices({
+    String? department,
+    int limit = 20,
+  }) {
     return _firestore
         .collection(_collection)
         .where('category', isEqualTo: '학과')
@@ -100,15 +119,19 @@ class NoticeRepository {
         .limit(limit)
         .snapshots()
         .map((snapshot) {
-      final departmentNotices = snapshot.docs.map((doc) => Notice.fromFirestore(doc)).toList();
-      
-      // 특정 학과 필터링 (있는 경우)
-      if (department != null && department.isNotEmpty) {
-        return departmentNotices.where((notice) => notice.department == department).toList();
-      }
-      
-      return departmentNotices;
-    });
+          final departmentNotices = snapshot.docs
+              .map((doc) => Notice.fromFirestore(doc))
+              .toList();
+
+          // 특정 학과 필터링 (있는 경우)
+          if (department != null && department.isNotEmpty) {
+            return departmentNotices
+                .where((notice) => notice.department == department)
+                .toList();
+          }
+
+          return departmentNotices;
+        });
   }
 
   /// 조회수 증가
@@ -319,7 +342,10 @@ class NoticeRepository {
       ];
 
       for (final notice in notices) {
-        await _firestore.collection(_collection).doc(notice.id).set(notice.toFirestore());
+        await _firestore
+            .collection(_collection)
+            .doc(notice.id)
+            .set(notice.toFirestore());
       }
 
       print('영남대학교 공지사항 샘플 데이터가 추가되었습니다.');
@@ -332,19 +358,21 @@ class NoticeRepository {
   /// 검색
   Future<List<Notice>> searchNotices(String keyword) async {
     try {
-      // Firestore에서는 전체 텍스트 검색이 제한적이므로 
+      // Firestore에서는 전체 텍스트 검색이 제한적이므로
       // 제목에서 키워드를 포함하는 공지사항을 찾습니다.
       final snapshot = await _firestore
           .collection(_collection)
           .orderBy('publishDate', descending: true)
           .get();
 
-      final allNotices = snapshot.docs.map((doc) => Notice.fromFirestore(doc)).toList();
-      
+      final allNotices = snapshot.docs
+          .map((doc) => Notice.fromFirestore(doc))
+          .toList();
+
       return allNotices.where((notice) {
         return notice.title.toLowerCase().contains(keyword.toLowerCase()) ||
-               notice.content.toLowerCase().contains(keyword.toLowerCase()) ||
-               notice.department.toLowerCase().contains(keyword.toLowerCase());
+            notice.content.toLowerCase().contains(keyword.toLowerCase()) ||
+            notice.department.toLowerCase().contains(keyword.toLowerCase());
       }).toList();
     } catch (e) {
       print('공지사항 검색 오류: $e');

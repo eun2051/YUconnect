@@ -365,7 +365,7 @@ class HomeScreenState extends State<HomeScreen> {
   Widget _buildScheduleSection() {
     final eventRepository = AcademicEventRepository();
     final now = DateTime.now();
-    
+
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       children: [
@@ -396,9 +396,7 @@ class HomeScreenState extends State<HomeScreen> {
               return SizedBox(
                 height: 100,
                 child: const Center(
-                  child: CircularProgressIndicator(
-                    color: Color(0xFF006FFD),
-                  ),
+                  child: CircularProgressIndicator(color: Color(0xFF006FFD)),
                 ),
               );
             }
@@ -413,11 +411,7 @@ class HomeScreenState extends State<HomeScreen> {
                 ),
                 child: Column(
                   children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 48,
-                      color: Colors.red[400],
-                    ),
+                    Icon(Icons.error_outline, size: 48, color: Colors.red[400]),
                     const SizedBox(height: 12),
                     Text(
                       '데이터를 불러오는 중 오류가 발생했습니다',
@@ -434,7 +428,7 @@ class HomeScreenState extends State<HomeScreen> {
             }
 
             final events = snapshot.data ?? [];
-            
+
             if (events.isEmpty) {
               return Container(
                 padding: const EdgeInsets.all(24),
@@ -466,7 +460,7 @@ class HomeScreenState extends State<HomeScreen> {
 
             // 최근 3개만 표시
             final recentEvents = events.take(3).toList();
-            
+
             return Column(
               children: recentEvents.map((event) {
                 return _buildEventCard(event);
@@ -481,17 +475,14 @@ class HomeScreenState extends State<HomeScreen> {
   /// 학사일정 카드 위젯
   Widget _buildEventCard(AcademicEvent event) {
     Color eventColor = _getEventCategoryColor(event.category);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: eventColor.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: eventColor.withOpacity(0.3), width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -557,7 +548,8 @@ class HomeScreenState extends State<HomeScreen> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                if (event.description != null && event.description!.isNotEmpty) ...[
+                if (event.description != null &&
+                    event.description!.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   Text(
                     event.description!,
@@ -637,7 +629,7 @@ class HomeScreenState extends State<HomeScreen> {
   Widget _buildInquirySection() {
     final user = FirebaseAuth.instance.currentUser;
     final inquiryRepository = InquiryRepository();
-    
+
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       children: [
@@ -651,7 +643,8 @@ class HomeScreenState extends State<HomeScreen> {
             TextButton(
               onPressed: () {
                 // MainScreen에서 민원 탭(index 2)으로 이동
-                final mainScreenState = context.findAncestorStateOfType<MainScreenState>();
+                final mainScreenState = context
+                    .findAncestorStateOfType<MainScreenState>();
                 mainScreenState?.setTab(2);
               },
               child: const Text(
@@ -672,11 +665,7 @@ class HomeScreenState extends State<HomeScreen> {
             ),
             child: Column(
               children: [
-                Icon(
-                  Icons.person_outline,
-                  size: 48,
-                  color: Colors.grey[400],
-                ),
+                Icon(Icons.person_outline, size: 48, color: Colors.grey[400]),
                 const SizedBox(height: 12),
                 Text(
                   '로그인이 필요합니다',
@@ -697,9 +686,7 @@ class HomeScreenState extends State<HomeScreen> {
                 return SizedBox(
                   height: 100,
                   child: const Center(
-                    child: CircularProgressIndicator(
-                      color: Color(0xFF006FFD),
-                    ),
+                    child: CircularProgressIndicator(color: Color(0xFF006FFD)),
                   ),
                 );
               }
@@ -735,7 +722,7 @@ class HomeScreenState extends State<HomeScreen> {
               }
 
               final inquiries = snapshot.data ?? [];
-              
+
               if (inquiries.isEmpty) {
                 return Container(
                   padding: const EdgeInsets.all(24),
@@ -767,13 +754,10 @@ class HomeScreenState extends State<HomeScreen> {
 
               // 최근 3개만 표시
               final recentInquiries = inquiries.take(3).toList();
-              
+
               return Column(
                 children: recentInquiries.map((inquiry) {
-                  return InquiryCard(
-                    inquiry: inquiry,
-                    isAdmin: false,
-                  );
+                  return InquiryCard(inquiry: inquiry, isAdmin: false);
                 }).toList(),
               );
             },

@@ -5,7 +5,8 @@ class EventRegistrationScreen extends StatefulWidget {
   const EventRegistrationScreen({super.key});
 
   @override
-  State<EventRegistrationScreen> createState() => _EventRegistrationScreenState();
+  State<EventRegistrationScreen> createState() =>
+      _EventRegistrationScreenState();
 }
 
 class _EventRegistrationScreenState extends State<EventRegistrationScreen> {
@@ -101,10 +102,10 @@ class _EventRegistrationScreenState extends State<EventRegistrationScreen> {
 
   String _formatDateRange() {
     if (_selectedDateRange == null) return '';
-    
+
     final startDate = _selectedDateRange!.start;
     final endDate = _selectedDateRange!.end;
-    
+
     if (startDate == endDate) {
       return '${startDate.year}년 ${startDate.month}월 ${startDate.day}일';
     } else {
@@ -166,16 +167,19 @@ class _EventRegistrationScreenState extends State<EventRegistrationScreen> {
                 child: Container(
                   width: double.infinity,
                   height: 48,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: ShapeDecoration(
-                    color: _selectedDateRange != null 
-                        ? const Color(0xFFF0F7FF) 
+                    color: _selectedDateRange != null
+                        ? const Color(0xFFF0F7FF)
                         : Colors.white,
                     shape: RoundedRectangleBorder(
                       side: BorderSide(
                         width: 1,
-                        color: _selectedDateRange != null 
-                            ? const Color(0xFF006FFD) 
+                        color: _selectedDateRange != null
+                            ? const Color(0xFF006FFD)
                             : const Color(0xFFC5C6CC),
                       ),
                       borderRadius: BorderRadius.circular(12),
@@ -254,13 +258,13 @@ class _EventRegistrationScreenState extends State<EventRegistrationScreen> {
               child: Container(
                 width: double.infinity,
                 height: 120,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: ShapeDecoration(
                   shape: RoundedRectangleBorder(
-                    side: const BorderSide(
-                      width: 1,
-                      color: Color(0xFFC5C6CC),
-                    ),
+                    side: const BorderSide(width: 1, color: Color(0xFFC5C6CC)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -320,10 +324,7 @@ class _EventRegistrationScreenState extends State<EventRegistrationScreen> {
     );
   }
 
-  Widget _buildInputSection({
-    required String label,
-    required Widget child,
-  }) {
+  Widget _buildInputSection({required String label, required Widget child}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -352,10 +353,7 @@ class _EventRegistrationScreenState extends State<EventRegistrationScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: ShapeDecoration(
         shape: RoundedRectangleBorder(
-          side: const BorderSide(
-            width: 1,
-            color: Color(0xFFC5C6CC),
-          ),
+          side: const BorderSide(width: 1, color: Color(0xFFC5C6CC)),
           borderRadius: BorderRadius.circular(12),
         ),
       ),

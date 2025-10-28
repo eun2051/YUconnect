@@ -6,7 +6,8 @@ class SimpleCalendarBottomSheet extends StatefulWidget {
   const SimpleCalendarBottomSheet({super.key});
 
   @override
-  State<SimpleCalendarBottomSheet> createState() => _SimpleCalendarBottomSheetState();
+  State<SimpleCalendarBottomSheet> createState() =>
+      _SimpleCalendarBottomSheetState();
 }
 
 class _SimpleCalendarBottomSheetState extends State<SimpleCalendarBottomSheet> {
@@ -14,50 +15,50 @@ class _SimpleCalendarBottomSheetState extends State<SimpleCalendarBottomSheet> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  
+
   // 샘플 학사일정 데이터
   final Map<DateTime, List<Map<String, dynamic>>> _events = {
     DateTime(2025, 3, 2): [
-      {'title': '2025년 1학기 개강', 'category': '일반', 'color': Colors.blue}
+      {'title': '2025년 1학기 개강', 'category': '일반', 'color': Colors.blue},
     ],
     DateTime(2025, 4, 14): [
-      {'title': '중간고사 시작', 'category': '시험', 'color': Colors.red}
+      {'title': '중간고사 시작', 'category': '시험', 'color': Colors.red},
     ],
     DateTime(2025, 4, 25): [
-      {'title': '중간고사 종료', 'category': '시험', 'color': Colors.red}
+      {'title': '중간고사 종료', 'category': '시험', 'color': Colors.red},
     ],
     DateTime(2025, 5, 5): [
-      {'title': '어린이날', 'category': '휴일', 'color': Colors.green}
+      {'title': '어린이날', 'category': '휴일', 'color': Colors.green},
     ],
     DateTime(2025, 6, 6): [
-      {'title': '현충일', 'category': '휴일', 'color': Colors.green}
+      {'title': '현충일', 'category': '휴일', 'color': Colors.green},
     ],
     DateTime(2025, 6, 16): [
-      {'title': '기말고사 시작', 'category': '시험', 'color': Colors.red}
+      {'title': '기말고사 시작', 'category': '시험', 'color': Colors.red},
     ],
     DateTime(2025, 6, 27): [
-      {'title': '기말고사 종료', 'category': '시험', 'color': Colors.red}
+      {'title': '기말고사 종료', 'category': '시험', 'color': Colors.red},
     ],
     DateTime(2025, 6, 28): [
-      {'title': '여름방학 시작', 'category': '휴일', 'color': Colors.green}
+      {'title': '여름방학 시작', 'category': '휴일', 'color': Colors.green},
     ],
     DateTime(2025, 8, 31): [
-      {'title': '여름방학 종료', 'category': '휴일', 'color': Colors.green}
+      {'title': '여름방학 종료', 'category': '휴일', 'color': Colors.green},
     ],
     DateTime(2025, 9, 1): [
-      {'title': '2학기 개강', 'category': '일반', 'color': Colors.blue}
+      {'title': '2학기 개강', 'category': '일반', 'color': Colors.blue},
     ],
     DateTime(2025, 10, 15): [
-      {'title': '중간고사 시작', 'category': '시험', 'color': Colors.red}
+      {'title': '중간고사 시작', 'category': '시험', 'color': Colors.red},
     ],
     DateTime(2025, 10, 26): [
-      {'title': '중간고사 종료', 'category': '시험', 'color': Colors.red}
+      {'title': '중간고사 종료', 'category': '시험', 'color': Colors.red},
     ],
     DateTime(2025, 12, 16): [
-      {'title': '기말고사 시작', 'category': '시험', 'color': Colors.red}
+      {'title': '기말고사 시작', 'category': '시험', 'color': Colors.red},
     ],
     DateTime(2025, 12, 27): [
-      {'title': '기말고사 종료', 'category': '시험', 'color': Colors.red}
+      {'title': '기말고사 종료', 'category': '시험', 'color': Colors.red},
     ],
   };
 
@@ -94,9 +95,7 @@ class _SimpleCalendarBottomSheetState extends State<SimpleCalendarBottomSheet> {
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         children: [
@@ -110,7 +109,7 @@ class _SimpleCalendarBottomSheetState extends State<SimpleCalendarBottomSheet> {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          
+
           // 헤더
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -123,7 +122,7 @@ class _SimpleCalendarBottomSheetState extends State<SimpleCalendarBottomSheet> {
               ),
             ),
           ),
-          
+
           // 캘린더
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -197,9 +196,9 @@ class _SimpleCalendarBottomSheetState extends State<SimpleCalendarBottomSheet> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // 선택된 날짜의 일정 표시
           Expanded(
             child: Container(
@@ -215,7 +214,7 @@ class _SimpleCalendarBottomSheetState extends State<SimpleCalendarBottomSheet> {
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Text(
-                      _selectedDay != null 
+                      _selectedDay != null
                           ? '${_selectedDay!.year}년 ${_selectedDay!.month}월 ${_selectedDay!.day}일 일정'
                           : '날짜를 선택해주세요',
                       style: const TextStyle(
@@ -251,7 +250,7 @@ class _SimpleCalendarBottomSheetState extends State<SimpleCalendarBottomSheet> {
                             ),
                           );
                         }
-                        
+
                         return ListView.builder(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           itemCount: events.length,
@@ -287,11 +286,12 @@ class _SimpleCalendarBottomSheetState extends State<SimpleCalendarBottomSheet> {
                                     ),
                                   ),
                                   const SizedBox(width: 12),
-                                  
+
                                   // 이벤트 정보
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         // 카테고리 태그
                                         Container(
@@ -300,8 +300,12 @@ class _SimpleCalendarBottomSheetState extends State<SimpleCalendarBottomSheet> {
                                             vertical: 4,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: event['color'].withOpacity(0.1),
-                                            borderRadius: BorderRadius.circular(12),
+                                            color: event['color'].withOpacity(
+                                              0.1,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                           ),
                                           child: Text(
                                             event['category'],
@@ -313,7 +317,7 @@ class _SimpleCalendarBottomSheetState extends State<SimpleCalendarBottomSheet> {
                                           ),
                                         ),
                                         const SizedBox(height: 8),
-                                        
+
                                         // 이벤트 제목
                                         Text(
                                           event['title'],
@@ -338,7 +342,7 @@ class _SimpleCalendarBottomSheetState extends State<SimpleCalendarBottomSheet> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
         ],
       ),

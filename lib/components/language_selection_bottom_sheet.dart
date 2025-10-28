@@ -5,10 +5,12 @@ class LanguageSelectionBottomSheet extends StatefulWidget {
   const LanguageSelectionBottomSheet({super.key});
 
   @override
-  State<LanguageSelectionBottomSheet> createState() => _LanguageSelectionBottomSheetState();
+  State<LanguageSelectionBottomSheet> createState() =>
+      _LanguageSelectionBottomSheetState();
 }
 
-class _LanguageSelectionBottomSheetState extends State<LanguageSelectionBottomSheet> {
+class _LanguageSelectionBottomSheetState
+    extends State<LanguageSelectionBottomSheet> {
   bool _isKorean = true; // 현재 한국어 여부 (true: 한국어, false: 영어)
 
   @override
@@ -29,10 +31,12 @@ class _LanguageSelectionBottomSheetState extends State<LanguageSelectionBottomSh
     // TODO: SharedPreferences에 선택된 언어 저장
     // TODO: 앱 전체 언어 변경 적용
     Navigator.pop(context);
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(_isKorean ? '한국어로 변경되었습니다.' : 'Language changed to English.'),
+        content: Text(
+          _isKorean ? '한국어로 변경되었습니다.' : 'Language changed to English.',
+        ),
         backgroundColor: const Color(0xFF006FFD),
       ),
     );
@@ -67,7 +71,7 @@ class _LanguageSelectionBottomSheetState extends State<LanguageSelectionBottomSh
               ),
             ),
           ),
-          
+
           // 닫기 버튼
           Positioned(
             left: 311,
@@ -81,15 +85,11 @@ class _LanguageSelectionBottomSheetState extends State<LanguageSelectionBottomSh
                   color: Color(0xFFE6E6E6),
                   shape: OvalBorder(),
                 ),
-                child: const Icon(
-                  Icons.close,
-                  size: 18,
-                  color: Colors.grey,
-                ),
+                child: const Icon(Icons.close, size: 18, color: Colors.grey),
               ),
             ),
           ),
-          
+
           // 한국어 옵션
           Positioned(
             left: 18,
@@ -110,11 +110,13 @@ class _LanguageSelectionBottomSheetState extends State<LanguageSelectionBottomSh
                             width: 34.40,
                             height: 34.40,
                             decoration: ShapeDecoration(
-                              color: _isKorean 
-                                  ? const Color(0xFFB4DBFF) 
+                              color: _isKorean
+                                  ? const Color(0xFFB4DBFF)
                                   : Colors.grey[200],
                               shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(999)),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(999),
+                                ),
                               ),
                             ),
                           ),
@@ -131,7 +133,9 @@ class _LanguageSelectionBottomSheetState extends State<LanguageSelectionBottomSh
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: _isKorean ? const Color(0xFF006FFD) : Colors.grey,
+                                  color: _isKorean
+                                      ? const Color(0xFF006FFD)
+                                      : Colors.grey,
                                 ),
                               ),
                             ),
@@ -154,7 +158,7 @@ class _LanguageSelectionBottomSheetState extends State<LanguageSelectionBottomSh
               ),
             ),
           ),
-          
+
           // 영어 옵션
           Positioned(
             left: 18,
@@ -175,11 +179,13 @@ class _LanguageSelectionBottomSheetState extends State<LanguageSelectionBottomSh
                             width: 34.40,
                             height: 34.40,
                             decoration: ShapeDecoration(
-                              color: !_isKorean 
-                                  ? const Color(0xFFB4DBFF) 
+                              color: !_isKorean
+                                  ? const Color(0xFFB4DBFF)
                                   : Colors.grey[200],
                               shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(999)),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(999),
+                                ),
                               ),
                             ),
                           ),
@@ -196,7 +202,9 @@ class _LanguageSelectionBottomSheetState extends State<LanguageSelectionBottomSh
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
-                                  color: !_isKorean ? const Color(0xFF006FFD) : Colors.grey,
+                                  color: !_isKorean
+                                      ? const Color(0xFF006FFD)
+                                      : Colors.grey,
                                 ),
                               ),
                             ),
@@ -219,7 +227,7 @@ class _LanguageSelectionBottomSheetState extends State<LanguageSelectionBottomSh
               ),
             ),
           ),
-          
+
           // 확인 버튼
           Positioned(
             left: 19,

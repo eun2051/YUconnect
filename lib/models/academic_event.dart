@@ -46,8 +46,8 @@ class AcademicEvent {
       title: data['title'] ?? '',
       description: data['description'],
       startDate: (data['startDate'] as Timestamp).toDate(),
-      endDate: data['endDate'] != null 
-          ? (data['endDate'] as Timestamp).toDate() 
+      endDate: data['endDate'] != null
+          ? (data['endDate'] as Timestamp).toDate()
           : null,
       category: AcademicEventCategory.values.firstWhere(
         (e) => e.value == data['category'],
@@ -55,8 +55,8 @@ class AcademicEvent {
       ),
       isAllDay: data['isAllDay'] ?? true,
       createdAt: (data['createdAt'] as Timestamp).toDate(),
-      updatedAt: data['updatedAt'] != null 
-          ? (data['updatedAt'] as Timestamp).toDate() 
+      updatedAt: data['updatedAt'] != null
+          ? (data['updatedAt'] as Timestamp).toDate()
           : null,
     );
   }
@@ -104,15 +104,15 @@ class AcademicEvent {
   bool containsDate(DateTime date) {
     final eventStart = DateTime(startDate.year, startDate.month, startDate.day);
     final checkDate = DateTime(date.year, date.month, date.day);
-    
+
     if (endDate == null) {
       return eventStart.isAtSameMomentAs(checkDate);
     }
-    
+
     final eventEnd = DateTime(endDate!.year, endDate!.month, endDate!.day);
     return checkDate.isAtSameMomentAs(eventStart) ||
-           checkDate.isAtSameMomentAs(eventEnd) ||
-           (checkDate.isAfter(eventStart) && checkDate.isBefore(eventEnd));
+        checkDate.isAtSameMomentAs(eventEnd) ||
+        (checkDate.isAfter(eventStart) && checkDate.isBefore(eventEnd));
   }
 
   @override

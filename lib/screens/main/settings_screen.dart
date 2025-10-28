@@ -67,11 +67,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
-            trailing ?? const Icon(
-              Icons.chevron_right,
-              size: 16,
-              color: Color(0xFF8F9098),
-            ),
+            trailing ??
+                const Icon(
+                  Icons.chevron_right,
+                  size: 16,
+                  color: Color(0xFF8F9098),
+                ),
           ],
         ),
       ),
@@ -95,20 +96,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 decoration: BoxDecoration(
                   color: const Color(0xFFE6F2FF),
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: const Color(0xFFCCE7FF),
-                    width: 2,
-                  ),
+                  border: Border.all(color: const Color(0xFFCCE7FF), width: 2),
                 ),
                 child: const Center(
-                  child: Icon(
-                    Icons.person,
-                    size: 45,
-                    color: Color(0xFF006FFD),
-                  ),
+                  child: Icon(Icons.person, size: 45, color: Color(0xFF006FFD)),
                 ),
               ),
-              
+
               // 편집 버튼
               Positioned(
                 bottom: 0,
@@ -137,9 +131,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // 사용자 정보
           Column(
             children: [
@@ -183,7 +177,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             // 상단 여백
             const SizedBox(height: 56),
-            
+
             // 헤더
             Container(
               width: double.infinity,
@@ -217,11 +211,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const NotificationScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const NotificationScreen(),
+                        ),
                       );
                     },
                   ),
-                  
+
                   // 구분선
                   Container(
                     width: double.infinity,
@@ -229,7 +225,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: Colors.grey[200],
                     margin: const EdgeInsets.symmetric(vertical: 8),
                   ),
-                  
+
                   // 모드 변경
                   _buildSettingItem(
                     title: '모드 변경',
@@ -242,7 +238,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       );
                     },
                   ),
-                  
+
                   // 구분선
                   Container(
                     width: double.infinity,
@@ -250,7 +246,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: Colors.grey[200],
                     margin: const EdgeInsets.symmetric(vertical: 8),
                   ),
-                  
+
                   // 언어
                   _buildSettingItem(
                     title: '언어',
@@ -259,11 +255,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
-                        builder: (context) => const LanguageSelectionBottomSheet(),
+                        builder: (context) =>
+                            const LanguageSelectionBottomSheet(),
                       );
                     },
                   ),
-                  
+
                   // 구분선
                   Container(
                     width: double.infinity,
@@ -271,7 +268,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: Colors.grey[200],
                     margin: const EdgeInsets.symmetric(vertical: 8),
                   ),
-                  
+
                   // 비밀번호 변경
                   _buildSettingItem(
                     title: '비밀번호 변경',
@@ -282,7 +279,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       );
                     },
                   ),
-                  
+
                   // 구분선
                   Container(
                     width: double.infinity,
@@ -290,18 +287,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: Colors.grey[200],
                     margin: const EdgeInsets.symmetric(vertical: 8),
                   ),
-                  
+
                   // 행사 신청 내역 조회
                   _buildSettingItem(
                     title: '행사 신청 내역 조회',
                     onTap: () {
                       // TODO: 행사 신청 내역 조회 화면으로 이동
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('행사 신청 내역 조회 기능은 준비 중입니다.')),
+                        const SnackBar(
+                          content: Text('행사 신청 내역 조회 기능은 준비 중입니다.'),
+                        ),
                       );
                     },
                   ),
-                  
+
                   // 구분선
                   Container(
                     width: double.infinity,
@@ -309,7 +308,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: Colors.grey[200],
                     margin: const EdgeInsets.symmetric(vertical: 8),
                   ),
-                  
+
                   // 관리자 인증
                   _buildSettingItem(
                     title: '관리자 인증',
@@ -320,9 +319,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       );
                     },
                   ),
-                  
+
                   const SizedBox(height: 40),
-                  
+
                   // 로그아웃 버튼
                   Container(
                     width: double.infinity,

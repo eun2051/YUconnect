@@ -8,11 +8,7 @@ class InquiryCard extends StatelessWidget {
   final Inquiry inquiry;
   final bool isAdmin;
 
-  const InquiryCard({
-    super.key,
-    required this.inquiry,
-    this.isAdmin = false,
-  });
+  const InquiryCard({super.key, required this.inquiry, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +17,8 @@ class InquiryCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => InquiryDetailScreen(
-              inquiry: inquiry,
-              isAdmin: isAdmin,
-            ),
+            builder: (context) =>
+                InquiryDetailScreen(inquiry: inquiry, isAdmin: isAdmin),
           ),
         );
       },
@@ -52,7 +46,10 @@ class InquiryCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: _getStatusColor().withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -68,7 +65,10 @@ class InquiryCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(12),
@@ -183,10 +183,12 @@ class InquiryCard extends StatelessWidget {
       }
       return content.substring(3).trim();
     }
-    
+
     // 제목이 없는 경우 첫 줄을 제목으로 사용
     final firstLine = content.split('\n').first.trim();
-    return firstLine.length > 30 ? '${firstLine.substring(0, 30)}...' : firstLine;
+    return firstLine.length > 30
+        ? '${firstLine.substring(0, 30)}...'
+        : firstLine;
   }
 
   String _extractContent() {
@@ -198,7 +200,7 @@ class InquiryCard extends StatelessWidget {
       }
       return '';
     }
-    
+
     // 제목이 없는 경우 전체 내용 반환
     return content;
   }
@@ -206,7 +208,7 @@ class InquiryCard extends StatelessWidget {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays > 0) {
       return '${difference.inDays}일 전';
     } else if (difference.inHours > 0) {
@@ -267,25 +269,25 @@ class InquiryCard extends StatelessWidget {
           minimumSize: Size.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 10),
-        ),
+        child: Text(text, style: const TextStyle(fontSize: 10)),
       ),
     );
   }
 
   /// 민원 상태 업데이트
-  Future<void> _updateInquiryStatus(BuildContext context, InquiryStatus newStatus) async {
+  Future<void> _updateInquiryStatus(
+    BuildContext context,
+    InquiryStatus newStatus,
+  ) async {
     try {
       final repository = InquiryRepository();
       await repository.updateInquiryStatus(inquiry.id, newStatus);
-      
+
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              newStatus == InquiryStatus.inProgress 
+              newStatus == InquiryStatus.inProgress
                   ? '민원 처리를 시작했습니다.'
                   : '민원이 완료 처리되었습니다.',
             ),
@@ -320,10 +322,7 @@ class InquiryCard extends StatelessWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('부서 전달 실패: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('부서 전달 실패: $e'), backgroundColor: Colors.red),
         );
       }
     }

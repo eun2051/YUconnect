@@ -31,11 +31,11 @@ class NoticeScreenState extends State<NoticeScreen>
   /// 초기 데이터 로드
   Future<void> _initializeData() async {
     if (_hasInitialized) return;
-    
+
     try {
       // 기존 공지사항 데이터 확인
       final notices = await _noticeRepository.getNotices(limit: 1).first;
-      
+
       // 데이터가 없으면 영남대학교 샘플 데이터 자동 추가
       if (notices.isEmpty) {
         await _noticeRepository.addYeungnamUniversitySampleData();
@@ -48,7 +48,7 @@ class NoticeScreenState extends State<NoticeScreen>
           );
         }
       }
-      
+
       _hasInitialized = true;
     } catch (e) {
       print('공지사항 데이터 초기화 오류: $e');
@@ -98,19 +98,26 @@ class NoticeScreenState extends State<NoticeScreen>
                 child: GestureDetector(
                   onTap: () => _onTabTap(0),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
                     decoration: ShapeDecoration(
-                      color: _selectedTab == 0 ? const Color(0xFFB4DBFF) : Colors.transparent,
+                      color: _selectedTab == 0
+                          ? const Color(0xFFB4DBFF)
+                          : Colors.transparent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      shadows: _selectedTab == 0 ? [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ] : null,
+                      shadows: _selectedTab == 0
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -121,7 +128,7 @@ class NoticeScreenState extends State<NoticeScreen>
                           '공지사항',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: _selectedTab == 0 
+                            color: _selectedTab == 0
                                 ? Colors.black
                                 : const Color(0xFF71727A),
                             fontSize: 14,
@@ -138,19 +145,26 @@ class NoticeScreenState extends State<NoticeScreen>
                 child: GestureDetector(
                   onTap: () => _onTabTap(1),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
                     decoration: ShapeDecoration(
-                      color: _selectedTab == 1 ? const Color(0xFFB4DBFF) : Colors.transparent,
+                      color: _selectedTab == 1
+                          ? const Color(0xFFB4DBFF)
+                          : Colors.transparent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      shadows: _selectedTab == 1 ? [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ] : null,
+                      shadows: _selectedTab == 1
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -161,7 +175,7 @@ class NoticeScreenState extends State<NoticeScreen>
                           '학과 커뮤니티',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: _selectedTab == 1 
+                            color: _selectedTab == 1
                                 ? Colors.black
                                 : const Color(0xFF71727A),
                             fontSize: 14,
@@ -213,7 +227,9 @@ class NoticeScreenState extends State<NoticeScreen>
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => NotificationScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => NotificationScreen(),
+                            ),
                           );
                         },
                         child: const SizedBox(
@@ -263,14 +279,25 @@ class NoticeScreenState extends State<NoticeScreen>
             margin: const EdgeInsets.only(bottom: 16),
             child: ElevatedButton.icon(
               onPressed: _addSampleData,
-              icon: const Icon(Icons.add_circle_outline, color: Colors.white, size: 16),
+              icon: const Icon(
+                Icons.add_circle_outline,
+                color: Colors.white,
+                size: 16,
+              ),
               label: const Text(
                 '영남대 공지사항 샘플 데이터 추가',
-                style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF006FFD),
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 16,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -300,7 +327,7 @@ class NoticeScreenState extends State<NoticeScreen>
                     ),
                   );
                 }
-                
+
                 if (snapshot.hasError) {
                   return Center(
                     child: Column(
@@ -324,9 +351,9 @@ class NoticeScreenState extends State<NoticeScreen>
                     ),
                   );
                 }
-                
+
                 final notices = snapshot.data ?? [];
-                
+
                 if (notices.isEmpty) {
                   return Center(
                     child: Column(
@@ -358,7 +385,7 @@ class NoticeScreenState extends State<NoticeScreen>
                     ),
                   );
                 }
-                
+
                 return ListView.builder(
                   itemCount: notices.length,
                   itemBuilder: (context, index) {
@@ -389,10 +416,7 @@ class NoticeScreenState extends State<NoticeScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('오류: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('오류: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -427,7 +451,7 @@ class NoticeScreenState extends State<NoticeScreen>
                     ),
                   );
                 }
-                
+
                 if (snapshot.hasError) {
                   return Center(
                     child: Column(
@@ -451,9 +475,9 @@ class NoticeScreenState extends State<NoticeScreen>
                     ),
                   );
                 }
-                
+
                 final notices = snapshot.data ?? [];
-                
+
                 if (notices.isEmpty) {
                   return Center(
                     child: Column(
@@ -485,7 +509,7 @@ class NoticeScreenState extends State<NoticeScreen>
                     ),
                   );
                 }
-                
+
                 return ListView.builder(
                   itemCount: notices.length,
                   itemBuilder: (context, index) {
@@ -500,12 +524,11 @@ class NoticeScreenState extends State<NoticeScreen>
     );
   }
 
-
-
   /// 실제 Notice 데이터를 사용하는 공지사항 아이템
   Widget _noticeItemFromData(Notice notice) {
-    final formattedDate = '${notice.publishDate.year}.${notice.publishDate.month.toString().padLeft(2, '0')}.${notice.publishDate.day.toString().padLeft(2, '0')}';
-    
+    final formattedDate =
+        '${notice.publishDate.year}.${notice.publishDate.month.toString().padLeft(2, '0')}.${notice.publishDate.day.toString().padLeft(2, '0')}';
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -523,110 +546,121 @@ class NoticeScreenState extends State<NoticeScreen>
           color: const Color(0xFFFAFAFA),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: notice.isImportant ? const Color(0xFF006FFD).withOpacity(0.3) : const Color(0xFFF0F0F0),
+            color: notice.isImportant
+                ? const Color(0xFF006FFD).withOpacity(0.3)
+                : const Color(0xFFF0F0F0),
             width: notice.isImportant ? 2 : 1,
           ),
         ),
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              // 카테고리 태그
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: _getCategoryColor(notice.category).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  notice.category,
-                  style: TextStyle(
-                    color: _getCategoryColor(notice.category),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              if (notice.isImportant) ...[
-                const SizedBox(width: 8),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                // 카테고리 태그
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFF6B35),
-                    borderRadius: BorderRadius.circular(8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
                   ),
-                  child: const Text(
-                    '중요',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 9,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
-              const Spacer(),
-              // 조회수 표시
-              if (notice.viewCount > 0)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF006FFD),
-                    borderRadius: BorderRadius.circular(10),
+                    color: _getCategoryColor(notice.category).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    notice.viewCount.toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 9,
+                    notice.category,
+                    style: TextStyle(
+                      color: _getCategoryColor(notice.category),
+                      fontSize: 10,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            notice.title,
-            style: const TextStyle(
-              color: Color(0xFF1F2024),
-              fontSize: 14,
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w700,
+                if (notice.isImportant) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF6B35),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      '중요',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+                const Spacer(),
+                // 조회수 표시
+                if (notice.viewCount > 0)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF006FFD),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      notice.viewCount.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+              ],
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Text(
-                notice.department,
-                style: const TextStyle(
-                  color: Color(0xFF006FFD),
-                  fontSize: 11,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w600,
-                ),
+            const SizedBox(height: 8),
+            Text(
+              notice.title,
+              style: const TextStyle(
+                color: Color(0xFF1F2024),
+                fontSize: 14,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w700,
               ),
-              const SizedBox(width: 8),
-              Text(
-                formattedDate,
-                style: const TextStyle(
-                  color: Color(0xFF71727A),
-                  fontSize: 12,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w400,
-                  height: 1.33,
-                  letterSpacing: 0.12,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text(
+                  notice.department,
+                  style: const TextStyle(
+                    color: Color(0xFF006FFD),
+                    fontSize: 11,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 8),
+                Text(
+                  formattedDate,
+                  style: const TextStyle(
+                    color: Color(0xFF71727A),
+                    fontSize: 12,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    height: 1.33,
+                    letterSpacing: 0.12,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 

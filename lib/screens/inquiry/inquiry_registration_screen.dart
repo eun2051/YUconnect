@@ -9,14 +9,15 @@ class InquiryRegistrationScreen extends StatefulWidget {
   const InquiryRegistrationScreen({super.key});
 
   @override
-  State<InquiryRegistrationScreen> createState() => _InquiryRegistrationScreenState();
+  State<InquiryRegistrationScreen> createState() =>
+      _InquiryRegistrationScreenState();
 }
 
 class _InquiryRegistrationScreenState extends State<InquiryRegistrationScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   final _inquiryRepository = InquiryRepository();
-  
+
   InquiryCategory? _selectedCategory;
   bool _isSubmitting = false;
   bool _agreeTerms = false;
@@ -81,7 +82,10 @@ class _InquiryRegistrationScreenState extends State<InquiryRegistrationScreen> {
               '제목',
               Container(
                 height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(color: const Color(0xFFC5C6CC)),
                   borderRadius: BorderRadius.circular(12),
@@ -109,7 +113,10 @@ class _InquiryRegistrationScreenState extends State<InquiryRegistrationScreen> {
                 onTap: _showCategoryBottomSheet,
                 child: Container(
                   height: 48,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     border: Border.all(color: const Color(0xFFC5C6CC)),
                     borderRadius: BorderRadius.circular(12),
@@ -120,14 +127,17 @@ class _InquiryRegistrationScreenState extends State<InquiryRegistrationScreen> {
                       Text(
                         _selectedCategory?.displayName ?? '카테고리를 선택해주세요.',
                         style: TextStyle(
-                          color: _selectedCategory != null 
-                              ? Colors.black 
+                          color: _selectedCategory != null
+                              ? Colors.black
                               : const Color(0xFF8F9098),
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      const Icon(Icons.arrow_drop_down, color: Color(0xFF8F9098)),
+                      const Icon(
+                        Icons.arrow_drop_down,
+                        color: Color(0xFF8F9098),
+                      ),
                     ],
                   ),
                 ),
@@ -174,7 +184,10 @@ class _InquiryRegistrationScreenState extends State<InquiryRegistrationScreen> {
               '민원 내용',
               Container(
                 height: 154,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(color: const Color(0xFFC5C6CC)),
                   borderRadius: BorderRadius.circular(12),
@@ -212,15 +225,17 @@ class _InquiryRegistrationScreenState extends State<InquiryRegistrationScreen> {
                     height: 24,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: _agreeTerms 
-                            ? const Color(0xFF006FFD) 
+                        color: _agreeTerms
+                            ? const Color(0xFF006FFD)
                             : const Color(0xFFC5C6CC),
                         width: 1.5,
                       ),
                       borderRadius: BorderRadius.circular(6),
-                      color: _agreeTerms ? const Color(0xFF006FFD) : Colors.white,
+                      color: _agreeTerms
+                          ? const Color(0xFF006FFD)
+                          : Colors.white,
                     ),
-                    child: _agreeTerms 
+                    child: _agreeTerms
                         ? const Icon(Icons.check, color: Colors.white, size: 16)
                         : null,
                   ),
@@ -346,10 +361,10 @@ class _InquiryRegistrationScreenState extends State<InquiryRegistrationScreen> {
 
   bool _canSubmit() {
     return _titleController.text.isNotEmpty &&
-           _contentController.text.isNotEmpty &&
-           _selectedCategory != null &&
-           _agreeTerms &&
-           !_isSubmitting;
+        _contentController.text.isNotEmpty &&
+        _selectedCategory != null &&
+        _agreeTerms &&
+        !_isSubmitting;
   }
 
   Future<void> _submitInquiry() async {
@@ -389,10 +404,7 @@ class _InquiryRegistrationScreenState extends State<InquiryRegistrationScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('민원 등록 실패: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('민원 등록 실패: $e'), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -570,9 +582,7 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
           color: isSelected ? const Color(0xFFEAF2FF) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected 
-                ? const Color(0xFF006FFD) 
-                : Colors.transparent,
+            color: isSelected ? const Color(0xFF006FFD) : Colors.transparent,
           ),
         ),
         child: Row(
@@ -581,8 +591,8 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: isSelected 
-                    ? const Color(0xFF006FFD) 
+                color: isSelected
+                    ? const Color(0xFF006FFD)
                     : const Color(0xFFB4DBFF),
                 shape: BoxShape.circle,
               ),

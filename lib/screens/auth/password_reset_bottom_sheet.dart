@@ -196,7 +196,6 @@ class _PasswordResetBottomSheetState extends State<PasswordResetBottomSheet> {
             ),
 
             const SizedBox(height: 24), // 줄임
-
             // 닫기 버튼
             Align(
               alignment: Alignment.centerRight,
@@ -215,7 +214,6 @@ class _PasswordResetBottomSheetState extends State<PasswordResetBottomSheet> {
             ),
 
             const SizedBox(height: 16), // 줄임
-
             // 제목
             const Text(
               '비밀번호를 잊었나요?',
@@ -228,7 +226,6 @@ class _PasswordResetBottomSheetState extends State<PasswordResetBottomSheet> {
             ),
 
             const SizedBox(height: 16), // 줄임
-
             // 설명
             const Text(
               '본인 확인을 위해 이메일과 현재 비밀번호를 입력해주세요.',
@@ -242,7 +239,6 @@ class _PasswordResetBottomSheetState extends State<PasswordResetBottomSheet> {
             ),
 
             const SizedBox(height: 24), // 줄임
-
             // 이메일 입력 필드
             Container(
               width: double.infinity,
@@ -267,7 +263,6 @@ class _PasswordResetBottomSheetState extends State<PasswordResetBottomSheet> {
             ),
 
             const SizedBox(height: 16), // 줄임
-
             // 현재 비밀번호 입력 필드
             Container(
               width: double.infinity,
@@ -292,7 +287,6 @@ class _PasswordResetBottomSheetState extends State<PasswordResetBottomSheet> {
             ),
 
             const SizedBox(height: 16), // 줄임
-
             // 안내 텍스트
             const Align(
               alignment: Alignment.centerLeft,
@@ -308,7 +302,6 @@ class _PasswordResetBottomSheetState extends State<PasswordResetBottomSheet> {
             ),
 
             const SizedBox(height: 24), // 줄임
-
             // 확인 버튼
             GestureDetector(
               onTap: _isLoading ? null : _authenticateUser,
@@ -452,7 +445,6 @@ class _PasswordResetBottomSheetState extends State<PasswordResetBottomSheet> {
             ),
 
             const SizedBox(height: 24), // 줄임
-
             // 확인 버튼
             GestureDetector(
               onTap: _isLoading ? null : _resetPassword,
@@ -552,7 +544,6 @@ class _PasswordResetBottomSheetState extends State<PasswordResetBottomSheet> {
             ),
 
             const SizedBox(height: 40), // 줄임
-
             // 확인 버튼
             GestureDetector(
               onTap: () => Navigator.pop(context),

@@ -6,11 +6,8 @@ import '../../repositories/notice_repository.dart';
 /// 공지사항 상세 페이지
 class NoticeDetailScreen extends StatefulWidget {
   final Notice notice;
-  
-  const NoticeDetailScreen({
-    super.key,
-    required this.notice,
-  });
+
+  const NoticeDetailScreen({super.key, required this.notice});
 
   @override
   State<NoticeDetailScreen> createState() => _NoticeDetailScreenState();
@@ -67,7 +64,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final categoryColor = _getCategoryColor(widget.notice.category);
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -114,10 +111,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFFF8FAFC),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: const Color(0xFFE2E8F0),
-                  width: 1,
-                ),
+                border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,7 +171,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // 제목
                   Text(
                     widget.notice.title,
@@ -189,7 +183,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // 작성자 정보
                   Row(
                     children: [
@@ -233,7 +227,9 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            DateFormat('yyyy.MM.dd').format(widget.notice.publishDate),
+                            DateFormat(
+                              'yyyy.MM.dd',
+                            ).format(widget.notice.publishDate),
                             style: const TextStyle(
                               fontSize: 12,
                               color: Color(0xFF71727A),
@@ -264,9 +260,9 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // 내용
             Container(
               width: double.infinity,
@@ -274,10 +270,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: const Color(0xFFE2E8F0),
-                  width: 1,
-                ),
+                border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,7 +295,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                 ],
               ),
             ),
-            
+
             // 첨부파일 (있는 경우)
             if (widget.notice.attachments.isNotEmpty) ...[
               const SizedBox(height: 24),
@@ -312,10 +305,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: const Color(0xFFE2E8F0),
-                    width: 1,
-                  ),
+                  border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,8 +319,8 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    ...widget.notice.attachments.map((attachment) => 
-                      Container(
+                    ...widget.notice.attachments.map(
+                      (attachment) => Container(
                         margin: const EdgeInsets.only(bottom: 8),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -358,7 +348,9 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                               onPressed: () {
                                 // TODO: 첨부파일 다운로드 기능
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('첨부파일 다운로드 기능은 준비 중입니다.')),
+                                  const SnackBar(
+                                    content: Text('첨부파일 다운로드 기능은 준비 중입니다.'),
+                                  ),
                                 );
                               },
                               icon: const Icon(
@@ -375,7 +367,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
                 ),
               ),
             ],
-            
+
             const SizedBox(height: 32),
           ],
         ),

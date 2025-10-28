@@ -8,10 +8,7 @@ import '../../repositories/inquiry_repository.dart';
 class InquiryDetailScreen extends StatefulWidget {
   final Inquiry inquiry;
 
-  const InquiryDetailScreen({
-    super.key,
-    required this.inquiry,
-  });
+  const InquiryDetailScreen({super.key, required this.inquiry});
 
   @override
   State<InquiryDetailScreen> createState() => _InquiryDetailScreenState();
@@ -21,11 +18,11 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
     with SingleTickerProviderStateMixin {
   final InquiryRepository _inquiryRepository = InquiryRepository();
   final TextEditingController _responseController = TextEditingController();
-  
+
   bool _isAdminMode = false;
   bool _isSubmittingResponse = false;
   bool _showResponse = false;
-  
+
   late AnimationController _animationController;
   late Animation<double> _slideAnimation;
 
@@ -34,9 +31,10 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
     super.initState();
     _checkAdminStatus();
     _initAnimation();
-    
+
     // 답변이 있으면 자동으로 슬라이드 다운
-    if (widget.inquiry.adminResponse != null && widget.inquiry.adminResponse!.isNotEmpty) {
+    if (widget.inquiry.adminResponse != null &&
+        widget.inquiry.adminResponse!.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _toggleResponse();
       });
@@ -55,22 +53,18 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
-    _slideAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+
+    _slideAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   void _checkAdminStatus() {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       setState(() {
-        _isAdminMode = user.email == 'admin@yu.ac.kr' || 
-                      user.email == 'admin@test.com';
+        _isAdminMode =
+            user.email == 'admin@yu.ac.kr' || user.email == 'admin@test.com';
       });
     }
   }
@@ -79,7 +73,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
     setState(() {
       _showResponse = !_showResponse;
     });
-    
+
     if (_showResponse) {
       _animationController.forward();
     } else {
@@ -94,10 +88,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
       appBar: AppBar(
         title: const Text(
           '민원 상세',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -137,15 +128,17 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
           children: [
             // 민원 카드
             _buildInquiryCard(),
-            
+
             const SizedBox(height: 16),
-            
+
             // 답변 영역 (슬라이드)
-            if (widget.inquiry.adminResponse != null && widget.inquiry.adminResponse!.isNotEmpty)
+            if (widget.inquiry.adminResponse != null &&
+                widget.inquiry.adminResponse!.isNotEmpty)
               _buildResponseSection(),
-            
+
             // 관리자 답변 입력 (관리자 모드)
-            if (_isAdminMode && widget.inquiry.status != InquiryStatus.completed)
+            if (_isAdminMode &&
+                widget.inquiry.status != InquiryStatus.completed)
               _buildAdminResponseInput(),
           ],
         ),
@@ -157,17 +150,19 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
   Widget _buildInquiryCard() {
     final lines = widget.inquiry.content.split('\n');
     final title = lines.isNotEmpty ? lines[0] : '';
-    final content = lines.length > 2 ? lines.skip(2).join('\n') : widget.inquiry.content;
+    final content = lines.length > 2
+        ? lines.skip(2).join('\n')
+        : widget.inquiry.content;
 
     return GestureDetector(
-      onTap: widget.inquiry.adminResponse != null && widget.inquiry.adminResponse!.isNotEmpty
+      onTap:
+          widget.inquiry.adminResponse != null &&
+              widget.inquiry.adminResponse!.isNotEmpty
           ? _toggleResponse
           : null,
       child: Card(
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
@@ -183,7 +178,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
                 ],
               ),
               const SizedBox(height: 12),
-              
+
               // 제목
               if (title.isNotEmpty)
                 Text(
@@ -195,7 +190,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
                   ),
                 ),
               const SizedBox(height: 8),
-              
+
               // 작성자 및 날짜
               Row(
                 children: [
@@ -222,15 +217,12 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
                   const SizedBox(width: 4),
                   Text(
                     _formatDate(widget.inquiry.createdAt),
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
-              
+
               // 내용
               Text(
                 content,
@@ -240,16 +232,19 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
                   color: Color(0xFF2D2D2D),
                 ),
               ),
-              
+
               // 답변 보기 버튼 (답변이 있을 때)
-              if (widget.inquiry.adminResponse != null && widget.inquiry.adminResponse!.isNotEmpty)
+              if (widget.inquiry.adminResponse != null &&
+                  widget.inquiry.adminResponse!.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        _showResponse ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                        _showResponse
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
                         color: const Color(0xFF006FFD),
                       ),
                       Text(
@@ -322,7 +317,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
                       ],
                     ),
                   ),
-                  
+
                   // 답변 내용
                   Padding(
                     padding: const EdgeInsets.all(16),
@@ -348,9 +343,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
   Widget _buildAdminResponseInput() {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -358,13 +351,10 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
           children: [
             const Text(
               '답변 작성',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            
+
             TextField(
               controller: _responseController,
               maxLines: 5,
@@ -381,7 +371,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
               ),
             ),
             const SizedBox(height: 16),
-            
+
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -507,10 +497,7 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('답변 등록 실패: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('답변 등록 실패: $e'), backgroundColor: Colors.red),
         );
       }
     } finally {
