@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/inquiry.dart';
 import '../repositories/inquiry_repository.dart';
-import '../screens/inquiry/inquiry_detail_screen.dart';
+import './expandable_inquiry_card.dart';
 
 /// 민원 조회 바텀시트 - 모든 민원을 날짜순으로 표시
 class InquirySearchBottomSheet extends StatefulWidget {
@@ -69,27 +69,6 @@ class _InquirySearchBottomSheetState extends State<InquirySearchBottomSheet> {
         }).toList();
       }
     });
-  }
-
-  /// 민원 상세 페이지로 이동
-  void _navigateToDetail(Inquiry inquiry) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => InquiryDetailScreen(inquiry: inquiry),
-      ),
-    );
-  }
-
-  /// 상태별 색상
-  Color _getStatusColor(InquiryStatus status) {
-    switch (status) {
-      case InquiryStatus.registered:
-        return const Color(0xFF006FFD);
-      case InquiryStatus.inProgress:
-        return const Color(0xFFF59E0B);
-      case InquiryStatus.completed:
-        return const Color(0xFF10B981);
-    }
   }
 
   @override
@@ -286,129 +265,11 @@ class _InquirySearchBottomSheetState extends State<InquirySearchBottomSheet> {
             itemCount: _filteredInquiries.length,
             itemBuilder: (context, index) {
               final inquiry = _filteredInquiries[index];
-              final statusColor = _getStatusColor(inquiry.status);
-
-              return Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: statusColor.withOpacity(0.2),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () => _navigateToDetail(inquiry),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          // 상태 컬러 바
-                          Container(
-                            width: 4,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: statusColor,
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-
-                          // 민원 정보
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // 카테고리와 상태
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: statusColor.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Text(
-                                        inquiry.category.displayName,
-                                        style: TextStyle(
-                                          color: statusColor,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: statusColor.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Text(
-                                        inquiry.status.displayName,
-                                        style: TextStyle(
-                                          color: statusColor,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-
-                                // 민원 내용
-                                Text(
-                                  inquiry.content,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFF1F2024),
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 8),
-
-                                // 등록일
-                                Text(
-                                  '등록일: ${inquiry.createdAt.year}년 ${inquiry.createdAt.month}월 ${inquiry.createdAt.day}일',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF9CA3AF),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // 화살표 아이콘
-                          const Icon(
-                            Icons.chevron_right,
-                            color: Color(0xFF9CA3AF),
-                            size: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: ExpandableInquiryCard(
+                  inquiry: inquiry,
+                  isAdminMode: false, // 바텀시트에서는 항상 사용자 모드
                 ),
               );
             },

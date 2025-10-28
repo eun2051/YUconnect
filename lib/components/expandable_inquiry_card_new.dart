@@ -81,7 +81,7 @@ class _ExpandableInquiryCardState extends State<ExpandableInquiryCard>
       },
       {
         'title': '민원 확인',
-        'date': widget.inquiry.status != InquiryStatus.registered 
+        'date': widget.inquiry.status != InquiryStatus.registered
             ? widget.inquiry.createdAt.add(const Duration(hours: 1))
             : null,
         'isCompleted': widget.inquiry.status != InquiryStatus.registered,
@@ -89,7 +89,7 @@ class _ExpandableInquiryCardState extends State<ExpandableInquiryCard>
       },
       {
         'title': '민원 부서 전달',
-        'date': widget.inquiry.status == InquiryStatus.completed 
+        'date': widget.inquiry.status == InquiryStatus.completed
             ? widget.inquiry.createdAt.add(const Duration(hours: 2))
             : null,
         'isCompleted': widget.inquiry.status == InquiryStatus.completed,
@@ -97,8 +97,9 @@ class _ExpandableInquiryCardState extends State<ExpandableInquiryCard>
       },
       {
         'title': '답변 완료',
-        'date': widget.inquiry.status == InquiryStatus.completed 
-            ? widget.inquiry.updatedAt ?? widget.inquiry.createdAt.add(const Duration(days: 1))
+        'date': widget.inquiry.status == InquiryStatus.completed
+            ? widget.inquiry.updatedAt ??
+                  widget.inquiry.createdAt.add(const Duration(days: 1))
             : null,
         'isCompleted': widget.inquiry.status == InquiryStatus.completed,
         'isActive': widget.inquiry.status == InquiryStatus.completed,
@@ -137,7 +138,9 @@ class _ExpandableInquiryCardState extends State<ExpandableInquiryCard>
           Material(
             color: Colors.transparent,
             child: InkWell(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
               onTap: _toggleExpanded,
               child: Container(
                 padding: const EdgeInsets.all(16),
@@ -183,20 +186,30 @@ class _ExpandableInquiryCardState extends State<ExpandableInquiryCard>
                               onPressed: widget.onEdit,
                               icon: const Icon(Icons.edit, size: 18),
                               iconSize: 18,
-                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                              constraints: const BoxConstraints(
+                                minWidth: 32,
+                                minHeight: 32,
+                              ),
                             ),
                           if (widget.onDelete != null)
                             IconButton(
                               onPressed: widget.onDelete,
-                              icon: const Icon(Icons.delete, size: 18, color: Colors.red),
+                              icon: const Icon(
+                                Icons.delete,
+                                size: 18,
+                                color: Colors.red,
+                              ),
                               iconSize: 18,
-                              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                              constraints: const BoxConstraints(
+                                minWidth: 32,
+                                minHeight: 32,
+                              ),
                             ),
                         ],
                       ],
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // 민원 카드
                     Container(
                       width: double.infinity,
@@ -259,7 +272,7 @@ class _ExpandableInquiryCardState extends State<ExpandableInquiryCard>
               ),
             ),
           ),
-          
+
           // 확장 가능한 타임라인 영역
           SizeTransition(
             sizeFactor: _animation,
@@ -269,13 +282,13 @@ class _ExpandableInquiryCardState extends State<ExpandableInquiryCard>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 16),
-                  
+
                   // 타임라인
                   ...timelineSteps.asMap().entries.map((entry) {
                     final index = entry.key;
                     final step = entry.value;
                     final isLast = index == timelineSteps.length - 1;
-                    
+
                     return _buildTimelineStep(
                       title: step['title'],
                       date: step['date'],
@@ -284,17 +297,20 @@ class _ExpandableInquiryCardState extends State<ExpandableInquiryCard>
                       isLast: isLast,
                     );
                   }),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // 답변 내용 (완료된 경우)
-                  if (widget.inquiry.status == InquiryStatus.completed && 
+                  if (widget.inquiry.status == InquiryStatus.completed &&
                       widget.inquiry.adminResponse != null) ...[
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xFFC5C6CC), width: 0.5),
+                        border: Border.all(
+                          color: const Color(0xFFC5C6CC),
+                          width: 0.5,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
@@ -324,11 +340,14 @@ class _ExpandableInquiryCardState extends State<ExpandableInquiryCard>
                     ),
                     const SizedBox(height: 16),
                   ],
-                  
+
                   // 새 민원 등록 버튼
                   Container(
                     height: 40,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -382,8 +401,8 @@ class _ExpandableInquiryCardState extends State<ExpandableInquiryCard>
               width: 15,
               height: 15,
               decoration: BoxDecoration(
-                color: isCompleted 
-                    ? const Color(0xFF006FFD) 
+                color: isCompleted
+                    ? const Color(0xFF006FFD)
                     : const Color(0xFF66686C),
                 shape: BoxShape.circle,
               ),
@@ -400,7 +419,7 @@ class _ExpandableInquiryCardState extends State<ExpandableInquiryCard>
                     )
                   : null,
             ),
-            
+
             // 연결선 (마지막이 아닌 경우)
             if (!isLast) ...[
               const SizedBox(height: 8),
@@ -416,9 +435,9 @@ class _ExpandableInquiryCardState extends State<ExpandableInquiryCard>
             ],
           ],
         ),
-        
+
         const SizedBox(width: 16),
-        
+
         // 스텝 정보
         Expanded(
           child: Column(
