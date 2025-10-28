@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import '../../services/auth_service.dart';
+import '../../services/user_profile_service.dart';
 import '../../repositories/user_repository.dart';
 import '../../models/user.dart' as app_user;
 
 class RegisterStep2Screen extends StatefulWidget {
-  const RegisterStep2Screen({Key? key}) : super(key: key);
+  const RegisterStep2Screen({super.key});
 
   @override
   State<RegisterStep2Screen> createState() => _RegisterStep2ScreenState();
@@ -110,6 +111,7 @@ class _RegisterStep2ScreenState extends State<RegisterStep2Screen> {
     }
     setState(() => _isLoading = true);
     final userRepo = UserRepository();
+    final userProfileService = UserProfileService();
     final user = app_user.User(
       uid: _uid!,
       name: _nameController.text.trim(),
@@ -119,6 +121,7 @@ class _RegisterStep2ScreenState extends State<RegisterStep2Screen> {
       grade: int.tryParse(_gradeController.text.trim()) ?? 0,
     );
     try {
+      // 기존 사용자 정보 저장
       await userRepo
           .addUser(user)
           .timeout(
@@ -126,6 +129,10 @@ class _RegisterStep2ScreenState extends State<RegisterStep2Screen> {
             onTimeout: () =>
                 throw Exception('저장 시간이 너무 오래 걸립니다. 네트워크 상태를 확인해 주세요.'),
           );
+      
+      // 사용자 프로필 서비스에도 저장 (민원 시스템용)
+      await userProfileService.saveUserProfile(_nameController.text.trim());
+          
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(
         context,

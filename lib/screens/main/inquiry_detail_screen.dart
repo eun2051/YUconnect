@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/inquiry.dart';
 import '../../repositories/inquiry_repository.dart';
 
@@ -9,10 +10,10 @@ class InquiryDetailScreen extends StatefulWidget {
   final bool isAdmin;
 
   const InquiryDetailScreen({
-    Key? key,
+    super.key,
     required this.inquiry,
     required this.isAdmin,
-  }) : super(key: key);
+  });
 
   @override
   State<InquiryDetailScreen> createState() => _InquiryDetailScreenState();
@@ -41,13 +42,13 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
 
     switch (status) {
       case InquiryStatus.registered:
-        backgroundColor = Colors.orange[100]!;
-        textColor = Colors.orange[700]!;
+        backgroundColor = Colors.blue[100]!;
+        textColor = Colors.blue[700]!;
         text = '등록됨';
         break;
       case InquiryStatus.inProgress:
-        backgroundColor = Colors.blue[100]!;
-        textColor = Colors.blue[700]!;
+        backgroundColor = Colors.orange[100]!;
+        textColor = Colors.orange[700]!;
         text = '진행중';
         break;
       case InquiryStatus.completed:
@@ -268,6 +269,159 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
     );
   }
 
+  /// 민원 편집
+  void _editInquiry() {
+    final contentController = TextEditingController(text: _inquiry.content);
+    InquiryCategory selectedCategory = _inquiry.category;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('민원 편집'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<InquiryCategory>(
+                  initialValue: selectedCategory,
+                  decoration: const InputDecoration(
+                    labelText: '카테고리',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: InquiryCategory.values.map((category) {
+                    return DropdownMenuItem(
+                      value: category,
+                      child: Text(category.displayName),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        selectedCategory = value;
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: contentController,
+                  decoration: const InputDecoration(
+                    labelText: '내용',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 5,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('취소'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (contentController.text.trim().isNotEmpty) {
+                  try {
+                    // Firestore에서 직접 업데이트
+                    await FirebaseFirestore.instance
+                        .collection('inquiries')
+                        .doc(_inquiry.id)
+                        .update({
+                      'content': contentController.text.trim(),
+                      'category': selectedCategory.value,
+                      'updatedAt': Timestamp.now(),
+                    });
+                    
+                    // 로컬 상태 업데이트
+                    final updatedInquiry = _inquiry.copyWith(
+                      content: contentController.text.trim(),
+                      category: selectedCategory,
+                    );
+                    
+                    if (mounted) {
+                      setState(() {
+                        _inquiry = updatedInquiry;
+                      });
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('민원이 성공적으로 수정되었습니다.'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('민원 수정 실패: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                }
+              },
+              child: const Text('수정'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 민원 삭제
+  void _deleteInquiry() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('민원 삭제'),
+        content: const Text('정말로 이 민원을 삭제하시겠습니까?\n삭제된 민원은 복구할 수 없습니다.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('취소'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                await _inquiryRepository.deleteInquiry(_inquiry.id);
+                
+                if (mounted) {
+                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                  Navigator.of(context).pop(); // 상세 화면 닫기
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('민원이 성공적으로 삭제되었습니다.'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('민원 삭제 실패: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('삭제'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -289,6 +443,20 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF1F2024)),
         ),
+        actions: [
+          // 편집 버튼
+          IconButton(
+            onPressed: _editInquiry,
+            icon: const Icon(Icons.edit, color: Color(0xFF1F2024)),
+            tooltip: '편집',
+          ),
+          // 삭제 버튼
+          IconButton(
+            onPressed: _deleteInquiry,
+            icon: const Icon(Icons.delete, color: Colors.red),
+            tooltip: '삭제',
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -334,17 +502,12 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen> {
                         ),
                       ),
                       const Spacer(),
-                      FutureBuilder<String>(
-                        future: _inquiryRepository.getUserName(_inquiry.userId),
-                        builder: (context, snapshot) {
-                          return Text(
-                            snapshot.data ?? 'Loading...',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          );
-                        },
+                      Text(
+                        _inquiry.userName,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),

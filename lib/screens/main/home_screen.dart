@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'notification_screen.dart';
 import 'notice_screen.dart'; // NoticeScreen import 추가
 import '../../components/line_rounded_bell.dart';
+import '../../components/inquiry_card.dart';
+import '../../components/academic_calendar_bottom_sheet.dart';
+import '../../models/inquiry.dart';
+import '../../models/academic_event.dart';
+import '../../repositories/inquiry_repository.dart';
+import '../../repositories/academic_event_repository.dart';
 import 'main_screen.dart'; // MainScreen import 경로 수정
 
 /// YUconnect 홈화면 (공지사항/학사일정/총학생회 행사/민원조회)
 /// - 상단 탭 전환, 하단 네비게이터 연동, 각 섹션별 화면 제공
 /// - 더보기/학과 커뮤니티 더보기/민원 더보기/캘린더 바텀시트 등 동작 구현
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => HomeScreenState();
@@ -33,13 +40,9 @@ class HomeScreenState extends State<HomeScreen> {
   void _showCalendarSheet() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => SizedBox(
-        height: 400,
-        child: Center(child: Text('캘린더 바텀시트 (학사일정 상세)')),
-      ),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const AcademicCalendarBottomSheet(),
     );
   }
 
@@ -360,6 +363,9 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildScheduleSection() {
+    final eventRepository = AcademicEventRepository();
+    final now = DateTime.now();
+    
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       children: [
@@ -379,9 +385,228 @@ class HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        // TODO: 학사일정 리스트 위젯 연결
+        const SizedBox(height: 8),
+        StreamBuilder<List<AcademicEvent>>(
+          stream: eventRepository.getEventsByDateRange(
+            now,
+            now.add(const Duration(days: 30)), // 다음 30일
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return SizedBox(
+                height: 100,
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF006FFD),
+                  ),
+                ),
+              );
+            }
+
+            if (snapshot.hasError) {
+              return Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.red[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.red[200]!),
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red[400],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      '데이터를 불러오는 중 오류가 발생했습니다',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.red[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            final events = snapshot.data ?? [];
+            
+            if (events.isEmpty) {
+              return Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[200]!),
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.calendar_today_outlined,
+                      size: 48,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      '예정된 학사일정이 없습니다',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            // 최근 3개만 표시
+            final recentEvents = events.take(3).toList();
+            
+            return Column(
+              children: recentEvents.map((event) {
+                return _buildEventCard(event);
+              }).toList(),
+            );
+          },
+        ),
       ],
     );
+  }
+
+  /// 학사일정 카드 위젯
+  Widget _buildEventCard(AcademicEvent event) {
+    Color eventColor = _getEventCategoryColor(event.category);
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: eventColor.withOpacity(0.3),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 40,
+            decoration: BoxDecoration(
+              color: eventColor,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: eventColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        event.category.displayName,
+                        style: TextStyle(
+                          color: eventColor,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      _formatEventDate(event),
+                      style: const TextStyle(
+                        color: Color(0xFF71727A),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  event.title,
+                  style: const TextStyle(
+                    color: Color(0xFF1F2024),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (event.description != null && event.description!.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    event.description!,
+                    style: const TextStyle(
+                      color: Color(0xFF71727A),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 이벤트 카테고리별 색상
+  Color _getEventCategoryColor(AcademicEventCategory category) {
+    switch (category) {
+      case AcademicEventCategory.regular:
+        return const Color(0xFF006FFD);
+      case AcademicEventCategory.exam:
+        return const Color(0xFFFF6B35);
+      case AcademicEventCategory.holiday:
+        return const Color(0xFF10B981);
+      case AcademicEventCategory.registration:
+        return const Color(0xFF8B5CF6);
+      case AcademicEventCategory.special:
+        return const Color(0xFFF59E0B);
+    }
+  }
+
+  /// 이벤트 날짜 포맷팅
+  String _formatEventDate(AcademicEvent event) {
+    final startDate = event.startDate;
+    if (event.endDate == null) {
+      return '${startDate.month}/${startDate.day}';
+    } else {
+      final endDate = event.endDate!;
+      if (startDate.month == endDate.month) {
+        return '${startDate.month}/${startDate.day}-${endDate.day}';
+      } else {
+        return '${startDate.month}/${startDate.day}-${endDate.month}/${endDate.day}';
+      }
+    }
   }
 
   Widget _buildEventSection() {
@@ -410,6 +635,9 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildInquirySection() {
+    final user = FirebaseAuth.instance.currentUser;
+    final inquiryRepository = InquiryRepository();
+    
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       children: [
@@ -422,7 +650,9 @@ class HomeScreenState extends State<HomeScreen> {
             ),
             TextButton(
               onPressed: () {
-                // TODO: MainScreen에서 민원 탭으로 이동하도록 구현 필요
+                // MainScreen에서 민원 탭(index 2)으로 이동
+                final mainScreenState = context.findAncestorStateOfType<MainScreenState>();
+                mainScreenState?.setTab(2);
               },
               child: const Text(
                 '더보기',
@@ -431,7 +661,123 @@ class HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        // TODO: 민원 현황 리스트 위젯 연결
+        const SizedBox(height: 8),
+        if (user == null)
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey[200]!),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.person_outline,
+                  size: 48,
+                  color: Colors.grey[400],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  '로그인이 필요합니다',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          StreamBuilder<List<Inquiry>>(
+            stream: inquiryRepository.getCurrentUserInquiries(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return SizedBox(
+                  height: 100,
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF006FFD),
+                    ),
+                  ),
+                );
+              }
+
+              if (snapshot.hasError) {
+                return Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.red[50],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.red[200]!),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red[400],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        '데이터를 불러오는 중 오류가 발생했습니다',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.red[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              final inquiries = snapshot.data ?? [];
+              
+              if (inquiries.isEmpty) {
+                return Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey[200]!),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.inbox_outlined,
+                        size: 48,
+                        color: Colors.grey[400],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        '등록된 민원이 없습니다',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              // 최근 3개만 표시
+              final recentInquiries = inquiries.take(3).toList();
+              
+              return Column(
+                children: recentInquiries.map((inquiry) {
+                  return InquiryCard(
+                    inquiry: inquiry,
+                    isAdmin: false,
+                  );
+                }).toList(),
+              );
+            },
+          ),
       ],
     );
   }

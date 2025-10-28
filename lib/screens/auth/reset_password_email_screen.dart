@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ResetPasswordEmailScreen extends StatefulWidget {
-  const ResetPasswordEmailScreen({Key? key}) : super(key: key);
+  const ResetPasswordEmailScreen({super.key});
 
   @override
   State<ResetPasswordEmailScreen> createState() =>

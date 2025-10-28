@@ -68,6 +68,11 @@ class UserProfileService {
     final user = _auth.currentUser;
     if (user == null) throw Exception('사용자가 로그인되어 있지 않습니다.');
 
+    // 이메일 형태의 이름은 저장하지 않음
+    if (name.contains('@')) {
+      throw Exception('유효하지 않은 사용자 이름입니다.');
+    }
+
     final profile = UserProfile(
       id: user.uid,
       email: user.email ?? '',
@@ -105,12 +110,30 @@ class UserProfileService {
   /// 사용자 이름 조회 (캐시된 방식)
   Future<String> getUserName(String userId) async {
     try {
+      // 먼저 user_profiles에서 찾기
       final profile = await getUserProfile(userId);
-      if (profile?.name != null && profile!.name.isNotEmpty) {
+      if (profile?.name != null && profile!.name.isNotEmpty && !profile.name.contains('@')) {
         return profile.name;
       }
       
-      // 프로필이 없으면 기본 이름 생성 및 저장
+      // user_profiles에 없으면 기존 users 컬렉션에서 찾기 (기존 사용자용)
+      try {
+        final userDoc = await _firestore.collection('users').doc(userId).get();
+        if (userDoc.exists) {
+          final userData = userDoc.data() as Map<String, dynamic>;
+          final name = userData['name'] as String?;
+          
+          if (name != null && name.isNotEmpty && !name.contains('@')) {
+            // user_profiles에도 저장
+            await saveUserProfile(name);
+            return name;
+          }
+        }
+      } catch (e) {
+        print('기존 사용자 정보 조회 오류: $e');
+      }
+      
+      // 둘 다 없거나 이메일 형태면 기본 이름 생성 및 저장
       final defaultName = '사용자${userId.substring(0, 6)}';
       await saveUserProfile(defaultName);
       return defaultName;

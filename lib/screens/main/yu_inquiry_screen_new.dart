@@ -162,8 +162,9 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
   Widget _buildPageContent(int index) {
     // 상태에 따른 필터링
     InquiryStatus targetStatus;
-    if (index == 0) targetStatus = InquiryStatus.registered;
-    else if (index == 1) targetStatus = InquiryStatus.inProgress;
+    if (index == 0) {
+      targetStatus = InquiryStatus.registered;
+    } else if (index == 1) targetStatus = InquiryStatus.inProgress;
     else targetStatus = InquiryStatus.completed;
 
     if (_isAdminMode) {

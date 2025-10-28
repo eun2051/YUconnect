@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// 라인형 라운드 벨(알림) 아이콘 위젯
 class LineRoundedBell extends StatelessWidget {
-  const LineRoundedBell({Key? key}) : super(key: key);
+  const LineRoundedBell({super.key});
 
   @override
   Widget build(BuildContext context) {

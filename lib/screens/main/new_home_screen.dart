@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'notification_screen.dart';
 import 'notice_screen.dart';
 import 'main_screen.dart';
+import '../../components/academic_calendar_bottom_sheet.dart';
 
 /// YUconnect 홈화면 (새로운 디자인)
 /// - 피그마 디자인을 기반으로 한 새로운 인터페이스
 /// - 4개 탭 시스템: 공지사항, 학사일정, 총학생회 행사, 민원조회
 class NewHomeScreen extends StatefulWidget {
-  const NewHomeScreen({Key? key}) : super(key: key);
+  const NewHomeScreen({super.key});
 
   @override
   State<NewHomeScreen> createState() => NewHomeScreenState();
@@ -32,13 +33,9 @@ class NewHomeScreenState extends State<NewHomeScreen> {
   void _showCalendarSheet() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => SizedBox(
-        height: 400,
-        child: Center(child: Text('캘린더 바텀시트 (학사일정 상세)')),
-      ),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const AcademicCalendarBottomSheet(),
     );
   }
 
@@ -110,7 +107,7 @@ class NewHomeScreenState extends State<NewHomeScreen> {
                   MaterialPageRoute(builder: (context) => NotificationScreen()),
                 );
               },
-              child: Container(
+              child: SizedBox(
                 width: 28,
                 height: 28,
                 child: Icon(

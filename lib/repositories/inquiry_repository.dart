@@ -29,23 +29,19 @@ class InquiryRepository {
   Stream<List<Inquiry>> getCurrentUserInquiries() {
     final user = _auth.currentUser;
     if (user == null) {
-      print('getCurrentUserInquiries: No user logged in');
       return Stream.value([]);
     }
     
-    print('getCurrentUserInquiries: Querying for user ${user.uid}');
     return _firestore
         .collection(_collection)
         .where('userId', isEqualTo: user.uid)
         .snapshots()
         .map((snapshot) {
-          print('getCurrentUserInquiries: Found ${snapshot.docs.length} documents');
           final inquiries = snapshot.docs
               .map((doc) => Inquiry.fromFirestore(doc))
               .toList();
           // 클라이언트 측에서 정렬
           inquiries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-          print('getCurrentUserInquiries: Returning ${inquiries.length} inquiries');
           return inquiries;
         });
   }
@@ -144,5 +140,33 @@ class InquiryRepository {
       'responseAt': Timestamp.now(),
       'updatedAt': Timestamp.now(),
     });
+  }
+
+  /// 이메일 형태의 userName을 실제 이름으로 수정 (일회성 실행)
+  Future<void> fixEmailUserNames() async {
+    try {
+      final snapshot = await _firestore.collection(_collection).get();
+      
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final userName = data['userName'] as String?;
+        final userId = data['userId'] as String?;
+        
+        if (userName != null && userId != null && userName.contains('@')) {
+          // 실제 사용자 이름 조회
+          final actualUserName = await getUserName(userId);
+          
+          // 민원 문서 업데이트
+          await doc.reference.update({
+            'userName': actualUserName,
+            'updatedAt': Timestamp.now(),
+          });
+          
+          print('Updated inquiry ${doc.id}: $userName -> $actualUserName');
+        }
+      }
+    } catch (e) {
+      print('Error fixing email usernames: $e');
+    }
   }
 }

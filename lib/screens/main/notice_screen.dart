@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// 공지사항/학과 커뮤니티 전체보기 화면
 class NoticeScreen extends StatefulWidget {
   final int initialTab;
-  const NoticeScreen({Key? key, this.initialTab = 0}) : super(key: key);
+  const NoticeScreen({super.key, this.initialTab = 0});
 
   @override
   NoticeScreenState createState() => NoticeScreenState();

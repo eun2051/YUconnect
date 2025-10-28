@@ -6,7 +6,7 @@ import 'yu_inquiry_screen.dart';
 /// 앱 메인 네비게이터 화면 (홈/영대공지/영대민원/프로필)
 class MainScreen extends StatefulWidget {
   final int tabIndex;
-  const MainScreen({Key? key, this.tabIndex = 0}) : super(key: key);
+  const MainScreen({super.key, this.tabIndex = 0});
 
   @override
   MainScreenState createState() => MainScreenState();
@@ -42,7 +42,7 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _screens = [
+    final List<Widget> screens = [
       NewHomeScreen(key: _homeKey),
       NoticeScreen(key: _noticeKey),
       YUInquiryScreen(),
@@ -55,7 +55,7 @@ class MainScreenState extends State<MainScreen> {
       {'icon': Icons.person, 'label': '프로필'},
     ];
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: screens[_currentIndex],
       bottomNavigationBar: Container(
         color: Colors.white,
         padding: const EdgeInsets.only(top: 8, bottom: 24),

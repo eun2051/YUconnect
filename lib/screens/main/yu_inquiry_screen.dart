@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../repositories/inquiry_repository.dart';
 import '../../models/inquiry.dart';
-import 'inquiry_detail_screen.dart';
+import '../../repositories/inquiry_repository.dart';
+import '../../components/inquiry_card.dart';
+import '../inquiry_register_screen.dart';
 
 /// 영대민원 화면 - 등록된 민원/진행중/완료된 민원을 슬라이드 형식으로 관리
 class YUInquiryScreen extends StatefulWidget {
-  const YUInquiryScreen({Key? key}) : super(key: key);
+  const YUInquiryScreen({super.key});
 
   @override
   State<YUInquiryScreen> createState() => _YUInquiryScreenState();
@@ -27,6 +28,7 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
     _pageController = PageController();
     _getCurrentUser();
     _checkAdminStatus();
+    _fixExistingUserNames(); // 기존 이메일 형태 userName 수정
   }
 
   @override
@@ -76,7 +78,7 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
           textAlign: TextAlign.center,
           style: TextStyle(
             color: const Color(0xFF1F2024),
-            fontSize: 18,
+            fontSize: 22,
             fontFamily: 'Inter',
             fontWeight: FontWeight.w700,
           ),
@@ -144,7 +146,14 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
           // 추가 버튼 (+) - 사용자 모드에서만
           FloatingActionButton(
             heroTag: "add",
-            onPressed: _showAddInquiryDialog,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const InquiryRegisterScreen(),
+                ),
+              );
+            },
             backgroundColor: Colors.blue,
             child: const Icon(Icons.add, color: Colors.white),
           ),
@@ -203,7 +212,7 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: _tabController.index == 0 ? const Color(0xFF1F2024) : const Color(0xFF71727A),
-                          fontSize: 12,
+                          fontSize: 14,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w700,
                         ),
@@ -244,7 +253,7 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: _tabController.index == 1 ? const Color(0xFF1F2024) : const Color(0xFF71727A),
-                          fontSize: 12,
+                          fontSize: 14,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w700,
                         ),
@@ -285,7 +294,7 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: _tabController.index == 2 ? const Color(0xFF1F2024) : const Color(0xFF71727A),
-                          fontSize: 12,
+                          fontSize: 14,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w700,
                         ),
@@ -393,7 +402,10 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
           itemCount: inquiries.length,
           itemBuilder: (context, index) {
             final inquiry = inquiries[index];
-            return _buildInquiryCard(inquiry, status);
+            return InquiryCard(
+              inquiry: inquiry,
+              isAdmin: _isAdmin,
+            );
           },
         );
       },
@@ -414,344 +426,9 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
     }
   }
 
-  /// 민원 카드 위젯 생성
-  Widget _buildInquiryCard(Inquiry inquiry, String status) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: () => _navigateToInquiryDetail(inquiry),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  _buildStatusBadge(inquiry.status),
-                  const Spacer(),
-                  Text(
-                    _formatDate(inquiry.createdAt),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                inquiry.content.length > 50 
-                    ? '${inquiry.content.substring(0, 50)}...'
-                    : inquiry.content,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(
-                    Icons.person,
-                    size: 16,
-                    color: Colors.grey[600],
-                  ),
-                  const SizedBox(width: 4),
-                  FutureBuilder<String>(
-                    future: _inquiryRepository.getUserName(inquiry.userId),
-                    builder: (context, snapshot) {
-                      return Text(
-                        snapshot.data ?? 'Loading...',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      );
-                    },
-                  ),
-                  const Spacer(),
-                  if (_isAdmin && inquiry.status != InquiryStatus.completed)
-                    _buildAdminActionButtons(inquiry),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
-  /// 상태 배지 위젯
-  Widget _buildStatusBadge(InquiryStatus status) {
-    Color backgroundColor;
-    Color textColor;
-    String text;
 
-    switch (status) {
-      case InquiryStatus.registered:
-        backgroundColor = Colors.orange[100]!;
-        textColor = Colors.orange[700]!;
-        text = '등록됨';
-        break;
-      case InquiryStatus.inProgress:
-        backgroundColor = Colors.blue[100]!;
-        textColor = Colors.blue[700]!;
-        text = '진행중';
-        break;
-      case InquiryStatus.completed:
-        backgroundColor = Colors.green[100]!;
-        textColor = Colors.green[700]!;
-        text = '완료됨';
-        break;
-    }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-          color: textColor,
-        ),
-      ),
-    );
-  }
-
-  /// 관리자 액션 버튼들
-  Widget _buildAdminActionButtons(Inquiry inquiry) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (inquiry.status == InquiryStatus.registered)
-          ElevatedButton(
-            onPressed: () => _updateInquiryStatus(inquiry, InquiryStatus.inProgress),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              minimumSize: Size.zero,
-            ),
-            child: const Text(
-              '처리 시작',
-              style: TextStyle(fontSize: 12),
-            ),
-          ),
-        if (inquiry.status == InquiryStatus.inProgress) ...[
-          ElevatedButton(
-            onPressed: () => _notifyDepartment(inquiry),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              minimumSize: Size.zero,
-            ),
-            child: const Text(
-              '부서 전달',
-              style: TextStyle(fontSize: 12),
-            ),
-          ),
-          const SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: () => _updateInquiryStatus(inquiry, InquiryStatus.completed),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              minimumSize: Size.zero,
-            ),
-            child: const Text(
-              '완료 처리',
-              style: TextStyle(fontSize: 12),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
-  /// 날짜 포맷팅
-  String _formatDate(DateTime dateTime) {
-    return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
-  }
-
-  /// 민원 상태 업데이트
-  Future<void> _updateInquiryStatus(Inquiry inquiry, InquiryStatus newStatus) async {
-    try {
-      await _inquiryRepository.updateInquiryStatus(inquiry.id, newStatus);
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              newStatus == InquiryStatus.inProgress 
-                  ? '민원 처리를 시작했습니다.'
-                  : '민원이 완료 처리되었습니다.',
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('상태 업데이트 실패: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  /// 부서 전달 알림 (사용자에게 알림)
-  Future<void> _notifyDepartment(Inquiry inquiry) async {
-    try {
-      // 여기서 실제로는 푸시 알림을 보내거나 이메일을 발송할 수 있습니다.
-      // 현재는 상태 업데이트와 스낵바로 대체합니다.
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('해당 민원이 담당 부서에 전달되었습니다.'),
-            backgroundColor: Colors.orange,
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('부서 전달 실패: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  /// 민원 상세 페이지로 이동
-  void _navigateToInquiryDetail(Inquiry inquiry) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => InquiryDetailScreen(
-          inquiry: inquiry,
-          isAdmin: _isAdmin,
-        ),
-      ),
-    );
-  }
-
-  /// 새 민원 등록 다이얼로그
-  void _showAddInquiryDialog() {
-    final contentController = TextEditingController();
-    InquiryCategory selectedCategory = InquiryCategory.other;
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('새 민원 등록'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                DropdownButtonFormField<InquiryCategory>(
-                  value: selectedCategory,
-                  decoration: const InputDecoration(
-                    labelText: '카테고리',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: InquiryCategory.values.map((category) {
-                    return DropdownMenuItem(
-                      value: category,
-                      child: Text(category.displayName),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        selectedCategory = value;
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: contentController,
-                  decoration: const InputDecoration(
-                    labelText: '내용',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 5,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('취소'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (contentController.text.trim().isNotEmpty && _currentUser != null) {
-                  
-                  // 사용자 프로필에서 이름 가져오기
-                  final userName = await _inquiryRepository.getUserName(_currentUser!.uid);
-                  
-                  final newInquiry = Inquiry(
-                    id: '',
-                    userId: _currentUser!.uid,
-                    userName: userName,
-                    content: contentController.text.trim(),
-                    category: selectedCategory,
-                    status: InquiryStatus.registered,
-                    createdAt: DateTime.now(),
-                  );
-
-                  try {
-                    await _inquiryRepository.addInquiry(newInquiry);
-                    if (mounted) {
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('민원이 성공적으로 등록되었습니다.'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    }
-                  } catch (e) {
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('민원 등록 실패: $e'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
-                  }
-                }
-              },
-              child: const Text('등록'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   /// 검색 다이얼로그
   void _showSearchDialog() {
@@ -793,5 +470,14 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
         ],
       ),
     );
+  }
+
+  /// 기존 이메일 형태 userName 수정 (앱 시작 시 한 번만 실행)
+  void _fixExistingUserNames() async {
+    try {
+      await _inquiryRepository.fixEmailUserNames();
+    } catch (e) {
+      print('Error fixing existing usernames: $e');
+    }
   }
 }

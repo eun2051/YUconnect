@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RegisterStep1Screen extends StatelessWidget {
-  const RegisterStep1Screen({Key? key}) : super(key: key);
+  const RegisterStep1Screen({super.key});
 
   @override
   Widget build(BuildContext context) {

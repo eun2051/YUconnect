@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// 알림 조회 화면 (디자인 반영)
 class NotificationScreen extends StatelessWidget {
-  const NotificationScreen({Key? key}) : super(key: key);
+  const NotificationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
