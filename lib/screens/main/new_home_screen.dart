@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'notification_screen.dart';
 import 'notice_screen.dart';
 import 'main_screen.dart';
-import '../../components/academic_calendar_bottom_sheet.dart';
+import '../../components/simple_calendar_bottom_sheet.dart';
 
 /// YUconnect 홈화면 (새로운 디자인)
 /// - 피그마 디자인을 기반으로 한 새로운 인터페이스
@@ -35,7 +35,7 @@ class NewHomeScreenState extends State<NewHomeScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const AcademicCalendarBottomSheet(),
+      builder: (context) => const SimpleCalendarBottomSheet(),
     );
   }
 

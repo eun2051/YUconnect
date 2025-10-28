@@ -42,7 +42,7 @@ class HomeScreenState extends State<HomeScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const AcademicCalendarBottomSheet(),
+      builder: (context) => AcademicCalendarBottomSheet(),
     );
   }
 
