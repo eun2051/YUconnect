@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'new_home_screen.dart';
 import 'notice_screen.dart';
 import 'yu_inquiry_screen.dart';
+import 'settings_screen.dart';
 
 /// 앱 메인 네비게이터 화면 (홈/영대공지/영대민원/프로필)
 class MainScreen extends StatefulWidget {
@@ -46,7 +47,7 @@ class MainScreenState extends State<MainScreen> {
       NewHomeScreen(key: _homeKey),
       NoticeScreen(key: _noticeKey),
       YUInquiryScreen(),
-      const Center(child: Text('프로필')), // 임시
+      const SettingsScreen(), // 설정 화면으로 변경
     ];
     final navItems = [
       {'icon': Icons.explore, 'label': '홈'},

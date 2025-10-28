@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../main/notification_screen.dart';
 import '../../models/inquiry.dart';
 import '../../repositories/inquiry_repository.dart';
 
@@ -105,6 +106,29 @@ class _InquiryDetailScreenState extends State<InquiryDetailScreen>
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          // 알림 아이콘
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NotificationScreen()),
+                );
+              },
+              child: const SizedBox(
+                width: 28,
+                height: 28,
+                child: Icon(
+                  Icons.notifications_none_rounded,
+                  color: Color(0xFF2563EB),
+                  size: 28,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
