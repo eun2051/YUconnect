@@ -3,7 +3,8 @@ import 'notification_screen.dart';
 import 'notice_screen.dart';
 import 'main_screen.dart';
 import '../../components/simple_calendar_bottom_sheet.dart';
-import '../../components/student_council_events_section.dart';
+// import '../../components/student_council_events_section.dart';
+// import '../student_council/student_council_events_list_screen.dart';
 
 /// YUconnect 홈화면 (새로운 디자인)
 /// - 피그마 디자인을 기반으로 한 새로운 인터페이스
@@ -238,8 +239,17 @@ class NewHomeScreenState extends State<NewHomeScreen> {
   /// 메인 콘텐츠
   Widget _buildContent() {
     if (_selectedTab == 2) {
-      // 총학생회 행사 탭인 경우 특별한 레이아웃
-      return const StudentCouncilEventsSection();
+      // 총학생회 행사 탭인 경우 특별한 레이아웃 (임시 주석 처리)
+      // return const StudentCouncilEventsSection();
+      return Container(
+        padding: const EdgeInsets.all(20),
+        child: const Center(
+          child: Text(
+            '총학생회 행사 기능은 준비 중입니다.',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
+      );
     }
 
     return Container(
@@ -293,6 +303,17 @@ class NewHomeScreenState extends State<NewHomeScreen> {
               } else if (_selectedTab == 1) {
                 // 학사일정 더보기 (캘린더)
                 _showCalendarSheet();
+              } else if (_selectedTab == 2) {
+                // 총학생회 행사 더보기 (임시 주석 처리)
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => const StudentCouncilEventsListScreen(),
+                //   ),
+                // );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('총학생회 행사 기능은 준비 중입니다.')),
+                );
               } else if (_selectedTab == 3) {
                 // 민원조회 더보기
                 final mainState = context

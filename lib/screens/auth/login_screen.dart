@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
 import '../../repositories/user_repository.dart';
+import 'password_reset_email_screen.dart';
+import '../../components/password_reset_bottom_sheets.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -78,6 +80,16 @@ class _LoginScreenState extends State<LoginScreen> {
     //   context,
     // ).showSnackBar(const SnackBar(content: Text('로그인 성공!')));
     Navigator.pushReplacementNamed(context, '/main');
+  }
+
+  /// 비밀번호 재설정 바텀시트 표시
+  void _showPasswordResetBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const PasswordResetEmailBottomSheet(),
+    );
   }
 
   @override
@@ -188,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.centerLeft,
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/reset-password');
+                          _showPasswordResetBottomSheet(context);
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero, // 기본 패딩 제거

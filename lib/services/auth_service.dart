@@ -46,4 +46,20 @@ class AuthService {
   Future<void> signOut() async {
     await _auth.signOut();
   }
+
+  /// 비밀번호 재설정 이메일 전송
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      debugPrint('비밀번호 재설정 이메일 전송 실패: $e');
+      rethrow;
+    }
+  }
+
+  /// 현재 로그인된 사용자 가져오기
+  User? get currentUser => _auth.currentUser;
+
+  /// 사용자 상태 스트림
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
 }

@@ -88,12 +88,6 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
         elevation: 0,
         centerTitle: true,
         actions: [
-          // 🔥 검색 버튼 추가
-          IconButton(
-            onPressed: _showSearchBottomSheet,
-            icon: const Icon(Icons.search, color: Color(0xFF006FFD), size: 24),
-            tooltip: '민원 검색',
-          ),
           // 관리자 전환 버튼 추가
           IconButton(
             onPressed: () {

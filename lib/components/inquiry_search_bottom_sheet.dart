@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/inquiry.dart';
 import '../repositories/inquiry_repository.dart';
-import './expandable_inquiry_card.dart';
+import './expandable_inquiry_card_with_original_design.dart';
 
 /// 민원 조회 바텀시트 - 모든 민원을 날짜순으로 표시
 class InquirySearchBottomSheet extends StatefulWidget {
@@ -267,7 +267,7 @@ class _InquirySearchBottomSheetState extends State<InquirySearchBottomSheet> {
               final inquiry = _filteredInquiries[index];
               return Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: ExpandableInquiryCard(
+                child: ExpandableInquiryCardWithOriginalDesign(
                   inquiry: inquiry,
                   isAdminMode: false, // 바텀시트에서는 항상 사용자 모드
                 ),
