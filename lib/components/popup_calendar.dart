@@ -29,287 +29,34 @@ class _PopupCalendarState extends State<PopupCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
+    return Dialog(
+      backgroundColor: Colors.transparent,
       child: Container(
-        margin: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 24,
-              offset: const Offset(0, 12),
-              spreadRadius: 0,
-            ),
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-              spreadRadius: 0,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TableCalendar(
+              firstDay: DateTime.utc(2020, 1, 1),
+              lastDay: DateTime.utc(2030, 12, 31),
+              focusedDay: _focusedDay,
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
+                widget.onDateSelected(selectedDay);
+                Navigator.of(context).pop();
+              },
+              calendarFormat: CalendarFormat.month,
+              startingDayOfWeek: StartingDayOfWeek.sunday,
             ),
           ],
-        ),
-        child: Container(
-          height: 400, // 고정 높이를 크게 증가
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // 캘린더 헤더
-              Container(
-                color: const Color(0xFF006FFD),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _focusedDay = DateTime(
-                            _focusedDay.year,
-                            _focusedDay.month - 1,
-                          );
-                        });
-                      },
-                      icon: const Icon(Icons.chevron_left, color: Colors.white),
-                    ),
-                    Text(
-                      '${_focusedDay.year}년 ${_focusedDay.month}월',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _focusedDay = DateTime(
-                            _focusedDay.year,
-                            _focusedDay.month + 1,
-                          );
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.chevron_right,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // 캘린더 본체
-              SizedBox(
-                height: 280, // 높이를 크게 증가
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  child: TableCalendar<dynamic>(
-                    firstDay: DateTime.now(),
-                    lastDay: DateTime(2026, 12, 31),
-                    focusedDay: _focusedDay,
-                    rowHeight: 38, // 행 높이 정상화
-                    selectedDayPredicate: (day) {
-                      return isSameDay(_selectedDay, day);
-                    },
-                    calendarFormat: CalendarFormat.month,
-                    availableCalendarFormats: const {
-                      CalendarFormat.month: 'Month',
-                    },
-                    headerVisible: false,
-                    startingDayOfWeek: StartingDayOfWeek.sunday,
-                    daysOfWeekHeight: 28, // 요일 헤더 높이 정상화
-                    // 스타일링
-                    calendarStyle: CalendarStyle(
-                      outsideDaysVisible: false,
-                      weekendTextStyle: const TextStyle(
-                        color: Color(0xFF1F2024),
-                        fontSize: 14, // 텍스트 크기 정상화
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                      ),
-                      defaultTextStyle: const TextStyle(
-                        color: Color(0xFF1F2024),
-                        fontSize: 14, // 텍스트 크기 정상화
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                      ),
-                      selectedDecoration: const BoxDecoration(
-                        color: Color(0xFF006FFD),
-                        shape: BoxShape.circle,
-                      ),
-                      selectedTextStyle: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      todayDecoration: BoxDecoration(
-                        color: const Color(0xFF006FFD).withOpacity(0.3),
-                        shape: BoxShape.circle,
-                      ),
-                      todayTextStyle: const TextStyle(
-                        color: Color(0xFF006FFD),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      disabledTextStyle: const TextStyle(
-                        color: Color(0xFFC5C6CC),
-                        fontSize: 14,
-                      ),
-                      cellMargin: const EdgeInsets.all(2),
-                      cellPadding: const EdgeInsets.all(0),
-                    ),
-
-                    // 요일 헤더 스타일
-                    daysOfWeekStyle: const DaysOfWeekStyle(
-                      weekdayStyle: TextStyle(
-                        color: Color(0xFF8F9098),
-                        fontSize: 12,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w500,
-                      ),
-                      weekendStyle: TextStyle(
-                        color: Color(0xFF8F9098),
-                        fontSize: 12,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-
-                    enabledDayPredicate: (day) {
-                      // 오늘 이후의 날짜만 선택 가능
-                      return day.isAfter(
-                        DateTime.now().subtract(const Duration(days: 1)),
-                      );
-                    },
-
-                    onDaySelected: (selectedDay, focusedDay) {
-                      if (selectedDay.isAfter(
-                        DateTime.now().subtract(const Duration(days: 1)),
-                      )) {
-                        setState(() {
-                          _selectedDay = selectedDay;
-                          _focusedDay = focusedDay;
-                        });
-
-                        // 날짜 선택 후 잠시 대기 후 콜백 호출
-                        Future.delayed(
-                          const Duration(milliseconds: 200),
-                          () {
-                            widget.onDateSelected(selectedDay);
-                          },
-                        );
-                      }
-                    },
-
-                    onPageChanged: (focusedDay) {
-                      setState(() {
-                        _focusedDay = focusedDay;
-                      });
-                    },
-                  ),
-                ),
-              ),
-                              _focusedDay = focusedDay;
-                            });
-
-                            // 날짜 선택 후 잠시 대기 후 콜백 호출
-                            Future.delayed(
-                              Duration(milliseconds = 200),
-                              () {
-                                widget.onDateSelected(selectedDay);
-                              },
-                            );
-                          }
-                        },
-
-                        onPageChanged: (focusedDay) {
-                          setState(() {
-                            _focusedDay = focusedDay;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              // 하단 버튼 영역
-              Container(
-                padding = const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 12,
-                ),
-                decoration = const BoxDecoration(
-                  border: Border(
-                    top: BorderSide(color: Color(0xFFF1F2F4), width: 1),
-                  ),
-                ),
-                child = Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF8F9098),
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                        ),
-                        child: const Text(
-                          '취소',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _selectedDay != null
-                            ? () {
-                                widget.onDateSelected(_selectedDay!);
-                                Navigator.pop(context);
-                              }
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(
-                            0xFF006FFD,
-                          ), // 헤더와 동일한 색상
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: const Text(
-                          '선택',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

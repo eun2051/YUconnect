@@ -26,10 +26,13 @@ class StudentCouncilEventsSection extends StatelessWidget {
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: title,
       description: _getEventDescription(title),
-      eventDate: _parseDate(date),
-      createdAt: DateTime.now().subtract(const Duration(days: 5)),
-      createdBy: 'admin',
-      imageUrl: null,
+      location: location,
+      startDate: _parseDate(date),
+      endDate: _parseDate(date).add(const Duration(hours: 2)),
+      imageUrl: '',
+      category: '총학생회',
+      organizer: 'admin',
+      status: 'upcoming',
     );
 
     showModalBottomSheet(

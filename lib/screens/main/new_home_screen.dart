@@ -3,8 +3,7 @@ import 'notification_screen.dart';
 import 'notice_screen.dart';
 import 'main_screen.dart';
 import '../../components/simple_calendar_bottom_sheet.dart';
-// import '../../components/student_council_events_section.dart';
-// import '../student_council/student_council_events_list_screen.dart';
+import '../../components/student_council_events_section.dart';
 
 /// YUconnect 홈화면 (새로운 디자인)
 /// - 피그마 디자인을 기반으로 한 새로운 인터페이스
@@ -239,17 +238,8 @@ class NewHomeScreenState extends State<NewHomeScreen> {
   /// 메인 콘텐츠
   Widget _buildContent() {
     if (_selectedTab == 2) {
-      // 총학생회 행사 탭인 경우 특별한 레이아웃 (임시 주석 처리)
-      // return const StudentCouncilEventsSection();
-      return Container(
-        padding: const EdgeInsets.all(20),
-        child: const Center(
-          child: Text(
-            '총학생회 행사 기능은 준비 중입니다.',
-            style: TextStyle(fontSize: 16, color: Colors.grey),
-          ),
-        ),
-      );
+      // 총학생회 행사 탭인 경우 특별한 레이아웃
+      return const StudentCouncilEventsSection();
     }
 
     return Container(

@@ -32,7 +32,7 @@ class EventDetailModal extends StatelessWidget {
             _buildDateSection(),
 
             // 이미지 (있다면)
-            if (event.imageUrl != null) _buildImageSection(),
+            if (event.imageUrl.isNotEmpty) _buildImageSection(),
 
             // 내용
             _buildContentSection(),
@@ -148,7 +148,7 @@ class EventDetailModal extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Image.network(
-          event.imageUrl!,
+          event.imageUrl,
           width: double.infinity,
           height: 200,
           fit: BoxFit.cover,
@@ -159,7 +159,7 @@ class EventDetailModal extends StatelessWidget {
               height: 200,
               color: const Color(0xFFF1F2F4),
               child: const Center(
-                child: CircularProgressIndicator(color: Color(0xFF006FFD)),
+                child: CircularProgressIndicator(),
               ),
             );
           },
@@ -167,13 +167,7 @@ class EventDetailModal extends StatelessWidget {
             width: double.infinity,
             height: 200,
             color: const Color(0xFFF1F2F4),
-            child: const Center(
-              child: Icon(
-                Icons.image_not_supported,
-                size: 48,
-                color: Color(0xFF8F9098),
-              ),
-            ),
+            child: const Center(child: Icon(Icons.broken_image)),
           ),
         ),
       ),
@@ -282,8 +276,7 @@ class EventDetailModal extends StatelessWidget {
   /// 날짜 포맷팅
   String _getFormattedDate() {
     final weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-    final weekday = weekdays[event.eventDate.weekday % 7];
-
-    return '${event.eventDate.year}년 ${event.eventDate.month}월 ${event.eventDate.day}일 ($weekday)';
+    final weekday = weekdays[event.startDate.weekday % 7];
+    return '${event.startDate.year}년 ${event.startDate.month}월 ${event.startDate.day}일 ($weekday)';
   }
 }

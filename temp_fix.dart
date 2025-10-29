@@ -8,3 +8,4 @@
 
   /// 모던한 상태 칩
   Widget _buildModernStatusChip(InquiryStatus status) {
+}

@@ -276,7 +276,7 @@ class _InquiryScreenState extends State<InquiryScreen>
         for (int i = 0; i < allInquiries.length; i++) {
           final inquiry = allInquiries[i];
           print(
-            '민원 $i: ${inquiry.title} - 상태: ${inquiry.status.value} - 답변: ${inquiry.response != null ? "있음" : "없음"}',
+            '민원 $i: ${inquiry.content} - 상태: ${inquiry.status.value} - 답변: ${inquiry.adminResponse != null ? "있음" : "없음"}',
           );
         }
 
@@ -524,7 +524,8 @@ class _InquiryCardState extends State<_InquiryCard>
 
     // 답변이 있는지 확인
     bool hasResponse =
-        widget.inquiry.response != null && widget.inquiry.response!.isNotEmpty;
+        widget.inquiry.adminResponse != null &&
+        widget.inquiry.adminResponse!.isNotEmpty;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -603,7 +604,7 @@ class _InquiryCardState extends State<_InquiryCard>
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            widget.inquiry.response!,
+                            widget.inquiry.adminResponse!,
                             style: const TextStyle(
                               color: Color(0xFF2D2D2D),
                               fontSize: 12,

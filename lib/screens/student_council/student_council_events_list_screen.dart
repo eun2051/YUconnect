@@ -35,46 +35,61 @@ class _StudentCouncilEventsListScreenState
           title: '들풀제',
           description:
               '영남대학교 대표 축제인 들풀제가 개최됩니다. 다양한 공연과 부스, 먹거리가 준비되어 있으니 많은 참여 바랍니다.',
-          eventDate: DateTime(2024, 9, 30),
-          createdAt: DateTime.now().subtract(const Duration(days: 10)),
-          createdBy: 'admin',
-          imageUrl: null,
+          location: '영남대학교 천연잔디구장',
+          startDate: DateTime(2024, 9, 30),
+          endDate: DateTime(2024, 9, 30).add(const Duration(hours: 2)),
+          imageUrl: '',
+          category: '총학생회',
+          organizer: 'admin',
+          status: 'upcoming',
         ),
         StudentEvent(
           id: '2',
           title: '플리마켓 신청',
           description: '들풀제 기간 중 진행되는 플리마켓에 참여하실 분들은 미리 신청해주세요. 선착순 마감됩니다.',
-          eventDate: DateTime(2024, 10, 4),
-          createdAt: DateTime.now().subtract(const Duration(days: 8)),
-          createdBy: 'admin',
-          imageUrl: null,
+          location: '들풀제 플리마켓',
+          startDate: DateTime(2024, 10, 4),
+          endDate: DateTime(2024, 10, 4).add(const Duration(hours: 2)),
+          imageUrl: '',
+          category: '총학생회',
+          organizer: 'admin',
+          status: 'upcoming',
         ),
         StudentEvent(
           id: '3',
           title: '학과 체육대회',
           description: '각 학과별로 참여하는 체육대회입니다. 축구, 농구, 배구 등 다양한 종목에 참여할 수 있습니다.',
-          eventDate: DateTime(2024, 11, 15),
-          createdAt: DateTime.now().subtract(const Duration(days: 5)),
-          createdBy: 'admin',
-          imageUrl: null,
+          location: '영남대학교 체육관',
+          startDate: DateTime(2024, 11, 15),
+          endDate: DateTime(2024, 11, 15).add(const Duration(hours: 2)),
+          imageUrl: '',
+          category: '총학생회',
+          organizer: 'admin',
+          status: 'upcoming',
         ),
         StudentEvent(
           id: '4',
           title: '겨울 축제',
           description: '겨울을 맞이하는 특별한 축제입니다. 따뜻한 음료와 함께 즐거운 시간을 보내세요.',
-          eventDate: DateTime(2024, 12, 20),
-          createdAt: DateTime.now().subtract(const Duration(days: 3)),
-          createdBy: 'admin',
-          imageUrl: null,
+          location: '영남대학교 광장',
+          startDate: DateTime(2024, 12, 20),
+          endDate: DateTime(2024, 12, 20).add(const Duration(hours: 2)),
+          imageUrl: '',
+          category: '총학생회',
+          organizer: 'admin',
+          status: 'upcoming',
         ),
         StudentEvent(
           id: '5',
           title: '신입생 환영회',
           description: '새로운 학기를 맞이하는 신입생들을 위한 환영회입니다. 선배들과의 만남의 시간을 가져보세요.',
-          eventDate: DateTime(2025, 3, 5),
-          createdAt: DateTime.now().subtract(const Duration(days: 1)),
-          createdBy: 'admin',
-          imageUrl: null,
+          location: '영남대학교 대강당',
+          startDate: DateTime(2025, 3, 5),
+          endDate: DateTime(2025, 3, 5).add(const Duration(hours: 2)),
+          imageUrl: '',
+          category: '총학생회',
+          organizer: 'admin',
+          status: 'upcoming',
         ),
       ];
 
@@ -250,7 +265,7 @@ class _StudentCouncilEventsListScreenState
                     itemCount: _events.length,
                     itemBuilder: (context, index) {
                       final event = _events[index];
-                      final status = _getEventStatus(event.eventDate);
+                      final status = _getEventStatus(event.startDate);
                       final statusColor = _getStatusColor(status);
 
                       return Container(
@@ -293,7 +308,7 @@ class _StudentCouncilEventsListScreenState
                                       children: [
                                         Text(
                                           _formatDate(
-                                            event.eventDate,
+                                            event.startDate,
                                           ).split(' ')[0],
                                           style: TextStyle(
                                             color: statusColor,
@@ -303,7 +318,7 @@ class _StudentCouncilEventsListScreenState
                                         ),
                                         Text(
                                           _formatDate(
-                                            event.eventDate,
+                                            event.startDate,
                                           ).split(' ')[1],
                                           style: TextStyle(
                                             color: statusColor,
@@ -378,7 +393,7 @@ class _StudentCouncilEventsListScreenState
 
                                         // 등록일
                                         Text(
-                                          '등록일: ${event.createdAt.year}년 ${event.createdAt.month}월 ${event.createdAt.day}일',
+                                          '등록일: ${event.startDate.year}년 ${event.startDate.month}월 ${event.startDate.day}일',
                                           style: const TextStyle(
                                             fontSize: 12,
                                             color: Color(0xFF9CA3AF),

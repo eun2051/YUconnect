@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../models/academic_schedule.dart';
+import '../models/academic_schedule.dart' as model;
 import '../repositories/academic_schedule_repository.dart';
 
 /// 학사일정 캘린더 바텀시트
@@ -12,7 +12,7 @@ class CalendarBottomSheet extends StatefulWidget {
 }
 
 class _CalendarBottomSheetState extends State<CalendarBottomSheet> {
-  late final ValueNotifier<List<AcademicSchedule>> _selectedSchedules;
+  late final ValueNotifier<List<model.AcademicSchedule>> _selectedSchedules;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   final AcademicScheduleRepository _repository = AcademicScheduleRepository();
@@ -30,7 +30,9 @@ class _CalendarBottomSheetState extends State<CalendarBottomSheet> {
     super.dispose();
   }
 
-  List<AcademicSchedule> _getSchedulesForDay(DateTime day) {
+  List<model.AcademicSchedule> _getSchedulesForDay(DateTime day) {
+    // 더미 데이터용 메서드가 정의된 부분을 명확히 사용
+    // Firestore 연동이 아닌, 내부 더미 데이터 리스트를 사용하는 AcademicScheduleRepository의 getSchedulesForDate를 호출
     return _repository.getSchedulesForDate(day);
   }
 
@@ -81,7 +83,7 @@ class _CalendarBottomSheetState extends State<CalendarBottomSheet> {
           // 캘린더
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TableCalendar<AcademicSchedule>(
+            child: TableCalendar<model.AcademicSchedule>(
               firstDay: DateTime.utc(2024, 1, 1),
               lastDay: DateTime.utc(2026, 12, 31),
               focusedDay: _focusedDay,
@@ -160,7 +162,7 @@ class _CalendarBottomSheetState extends State<CalendarBottomSheet> {
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ValueListenableBuilder<List<AcademicSchedule>>(
+              child: ValueListenableBuilder<List<model.AcademicSchedule>>(
                 valueListenable: _selectedSchedules,
                 builder: (context, schedules, _) {
                   if (schedules.isEmpty) {
@@ -222,7 +224,7 @@ class _CalendarBottomSheetState extends State<CalendarBottomSheet> {
     );
   }
 
-  Widget _buildScheduleCard(AcademicSchedule schedule) {
+  Widget _buildScheduleCard(model.AcademicSchedule schedule) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),

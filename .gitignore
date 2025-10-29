@@ -96,3 +96,7 @@ web/icons/Icon-maskable-512.png
 # Test coverage
 coverage/
 test/coverage/
+
+# Temporary fix and test import files
+/temp_fix.dart
+/test_import.dart

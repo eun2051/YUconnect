@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
 import '../../repositories/user_repository.dart';
-import 'password_reset_email_screen.dart';
 import '../../components/password_reset_bottom_sheets.dart';
 
 class LoginScreen extends StatefulWidget {

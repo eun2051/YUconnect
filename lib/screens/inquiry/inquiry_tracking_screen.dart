@@ -181,7 +181,7 @@ class _InquiryTrackingScreenState extends State<InquiryTrackingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    inquiry.title,
+                    inquiry.content, // inquiry.title에서 inquiry.content로 변경
                     style: const TextStyle(
                       color: Color(0xFF1F2024),
                       fontSize: 14,
@@ -287,7 +287,8 @@ class _InquiryTrackingScreenState extends State<InquiryTrackingScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _selectedInquiry!.title,
+                _selectedInquiry!
+                    .content, // _selectedInquiry!.title에서 _selectedInquiry!.content로 변경
                 style: const TextStyle(
                   color: Color(0xFF1F2024),
                   fontSize: 14,

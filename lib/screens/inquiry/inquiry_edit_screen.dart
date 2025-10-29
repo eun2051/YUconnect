@@ -16,7 +16,6 @@ class InquiryEditScreen extends StatefulWidget {
 
 class _InquiryEditScreenState extends State<InquiryEditScreen> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _titleController;
   late final TextEditingController _contentController;
   final _inquiryRepository = InquiryRepository();
 
@@ -27,14 +26,12 @@ class _InquiryEditScreenState extends State<InquiryEditScreen> {
   void initState() {
     super.initState();
     // 기존 민원 데이터로 초기화
-    _titleController = TextEditingController(text: widget.inquiry.title);
     _contentController = TextEditingController(text: widget.inquiry.content);
     _selectedCategory = widget.inquiry.category.value;
   }
 
   @override
   void dispose() {
-    _titleController.dispose();
     _contentController.dispose();
     super.dispose();
   }
@@ -78,10 +75,6 @@ class _InquiryEditScreenState extends State<InquiryEditScreen> {
                     // 카테고리 선택
                     _buildCategorySection(),
                     const SizedBox(height: 32),
-
-                    // 제목 입력
-                    _buildTitleSection(),
-                    const SizedBox(height: 24),
 
                     // 내용 입력
                     _buildContentSection(),
@@ -188,64 +181,6 @@ class _InquiryEditScreenState extends State<InquiryEditScreen> {
           ),
         );
       },
-    );
-  }
-
-  /// 제목 입력 섹션
-  Widget _buildTitleSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '제목',
-          style: TextStyle(
-            color: Color(0xFF1F2024),
-            fontSize: 16,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 12),
-        TextFormField(
-          controller: _titleController,
-          decoration: InputDecoration(
-            hintText: '민원 제목을 입력해주세요',
-            hintStyle: const TextStyle(
-              color: Color(0xFFB0B3B8),
-              fontSize: 14,
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w400,
-            ),
-            filled: true,
-            fillColor: const Color(0xFFF7F8FD),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF006FFD), width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-          ),
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return '제목을 입력해주세요';
-            }
-            if (value.trim().length < 5) {
-              return '제목은 5자 이상 입력해주세요';
-            }
-            return null;
-          },
-        ),
-      ],
     );
   }
 
@@ -410,16 +345,10 @@ class _InquiryEditScreenState extends State<InquiryEditScreen> {
     });
 
     try {
-      final category = InquiryCategory.values.firstWhere(
-        (c) => c.value == _selectedCategory,
-      );
-
-      await _inquiryRepository.updateInquiry(
-        inquiryId: widget.inquiry.id,
-        userId: user.uid,
-        title: _titleController.text.trim(),
-        content: _contentController.text.trim(),
-        category: category,
+      // Replace updateInquiry with updateInquiryStatus or appropriate method
+      await _inquiryRepository.updateInquiryStatus(
+        widget.inquiry.id,
+        InquiryStatus.inProgress, // or the selected status if editable
       );
 
       if (mounted) {

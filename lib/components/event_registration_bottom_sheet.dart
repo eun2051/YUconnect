@@ -28,6 +28,7 @@ class _EventRegistrationBottomSheetState
   bool _isImageUploading = false;
 
   final ImageService _imageService = ImageService();
+  final StudentEventService _studentEventService = StudentEventService();
 
   @override
   void dispose() {
@@ -37,13 +38,15 @@ class _EventRegistrationBottomSheetState
   }
 
   void _selectDate() async {
-    final result = await showPopupCalendar(
+    final result = await showDialog<DateTime>(
       context: context,
-      selectedDate: _selectedDate,
-      // 간단한 위치 지정: 화면 중앙 상단
-      position: const Offset(80, 150), // 좌측에서 80px, 상단에서 150px
+      builder: (context) => PopupCalendar(
+        selectedDate: _selectedDate,
+        onDateSelected: (date) {
+          Navigator.of(context).pop(date);
+        },
+      ),
     );
-
     if (result != null) {
       setState(() {
         _selectedDate = result;
@@ -116,56 +119,31 @@ class _EventRegistrationBottomSheetState
 
       // 이미지가 선택된 경우 Firebase Storage에 업로드
       if (_selectedImage != null) {
-        imageUrl = await _imageService.uploadImageToFirebase(
-          _selectedImage!,
-          eventId,
-        );
-        if (imageUrl == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('이미지 업로드에 실패했습니다. 다시 시도해주세요.'),
-              backgroundColor: Colors.red,
-            ),
-          );
-          setState(() {
-            _isLoading = false;
-          });
-          return;
-        }
+        imageUrl = await _imageService.uploadImageToFirebase(_selectedImage!);
       }
 
       final newEvent = StudentEvent(
         id: eventId,
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
-        eventDate: _selectedDate!,
-        createdAt: DateTime.now(),
-        createdBy: 'current_user', // 실제로는 현재 로그인한 사용자 ID
-        imageUrl: imageUrl, // 이미지 URL 추가
+        location: '영남대학교',
+        startDate: _selectedDate!,
+        endDate: _selectedDate!.add(const Duration(hours: 2)),
+        imageUrl: imageUrl ?? '',
+        category: '총학생회',
+        organizer: 'current_user',
+        status: 'upcoming',
       );
 
-      final success = await StudentEventService.addEvent(newEvent);
-
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('행사가 성공적으로 등록되었습니다!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Navigator.pop(context, true); // 성공 시 true 반환
-      } else {
-        // 실패 시 업로드된 이미지 삭제
-        if (imageUrl != null) {
-          await _imageService.deleteImageFromFirebase(imageUrl);
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('행사 등록에 실패했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // 인스턴스 메서드로 호출, 반환값 없음
+      await _studentEventService.addEvent(newEvent);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('행사가 성공적으로 등록되었습니다!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pop(context, true); // 성공 시 true 반환
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

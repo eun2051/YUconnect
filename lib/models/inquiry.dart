@@ -127,4 +127,40 @@ class Inquiry {
       imageUrls: imageUrls ?? this.imageUrls,
     );
   }
+
+  /// JSON 변환 (Firestore 연동용)
+  factory Inquiry.fromJson(Map<String, dynamic> json, String id) {
+    return Inquiry(
+      id: id,
+      userId: json['userId'] ?? '',
+      userName: json['userName'] ?? '',
+      content: json['content'] ?? '',
+      category: InquiryCategory.fromString(json['category'] ?? 'other'),
+      status: InquiryStatus.fromString(json['status'] ?? 'registered'),
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
+      adminResponse: json['adminResponse'],
+      responseAt: json['responseAt'] != null
+          ? DateTime.parse(json['responseAt'])
+          : null,
+      imageUrls: List<String>.from(json['imageUrls'] ?? []),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'userName': userName,
+      'content': content,
+      'category': category.value,
+      'status': status.value,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'adminResponse': adminResponse,
+      'responseAt': responseAt?.toIso8601String(),
+      'imageUrls': imageUrls,
+    };
+  }
 }
