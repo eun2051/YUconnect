@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'notification_screen.dart';
+import 'package:yuconnect/screens/main/notification_screen.dart';
 import '../../models/notice.dart';
 import '../../repositories/notice_repository.dart';
 import '../notices/notice_detail_screen.dart';
@@ -251,7 +251,6 @@ class NoticeScreenState extends State<NoticeScreen>
               _buildContentSwitcher(),
             ],
           ),
-          const SizedBox(height: 20),
           // 페이지뷰 컨텐츠
           Expanded(
             child: PageView(
@@ -273,38 +272,7 @@ class NoticeScreenState extends State<NoticeScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 샘플 데이터 추가 버튼 (개발/테스트용)
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.only(bottom: 16),
-            child: ElevatedButton.icon(
-              onPressed: _addSampleData,
-              icon: const Icon(
-                Icons.add_circle_outline,
-                color: Colors.white,
-                size: 16,
-              ),
-              label: const Text(
-                '영남대 공지사항 샘플 데이터 추가',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF006FFD),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 16,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
-          ),
-          // 실제 공지사항 목록 (영남대학교 공식 소식)
+          // vertical gap 없이
           Expanded(
             child: StreamBuilder<List<Notice>>(
               stream: _noticeRepository.getUniversityNotices(limit: 10),
@@ -401,34 +369,13 @@ class NoticeScreenState extends State<NoticeScreen>
     );
   }
 
-  /// 샘플 데이터 추가
-  Future<void> _addSampleData() async {
-    try {
-      await _noticeRepository.addYeungnamUniversitySampleData();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('영남대학교 공지사항 샘플 데이터가 추가되었습니다!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('오류: $e'), backgroundColor: Colors.red),
-        );
-      }
-    }
-  }
-
   Widget _buildCommunityList() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 학과 공지사항 목록
+          // vertical gap 없이
           Expanded(
             child: StreamBuilder<List<Notice>>(
               stream: _noticeRepository.getDepartmentNotices(limit: 10),

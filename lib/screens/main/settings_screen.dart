@@ -4,6 +4,7 @@ import '../auth/login_screen.dart';
 import '../../components/mode_selection_bottom_sheet.dart';
 import '../../components/language_selection_bottom_sheet.dart';
 import 'notification_screen.dart';
+import '../../components/password_reset_bottom_sheets.dart';
 
 /// 설정 화면
 class SettingsScreen extends StatefulWidget {
@@ -273,9 +274,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildSettingItem(
                     title: '비밀번호 변경',
                     onTap: () {
-                      // TODO: 비밀번호 변경 화면으로 이동
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('비밀번호 변경 기능은 준비 중입니다.')),
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) =>
+                            const PasswordResetEmailBottomSheet(),
                       );
                     },
                   ),

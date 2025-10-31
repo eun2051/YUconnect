@@ -5,6 +5,7 @@ import '../../repositories/inquiry_repository.dart';
 import '../../components/inquiry_card.dart';
 import '../../components/inquiry_search_bottom_sheet.dart';
 import '../inquiry_register_screen.dart';
+import 'package:yuconnect/screens/main/notification_screen.dart';
 
 /// 영대민원 화면 - 등록된 민원/진행중/완료된 민원을 슬라이드 형식으로 관리
 class YUInquiryScreen extends StatefulWidget {
@@ -88,6 +89,19 @@ class _YUInquiryScreenState extends State<YUInquiryScreen>
         elevation: 0,
         centerTitle: true,
         actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.notifications_none_rounded,
+              color: Color(0xFF2563EB),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationScreen()),
+              );
+            },
+            tooltip: '알림',
+          ),
           // 관리자 전환 버튼 추가
           IconButton(
             onPressed: () {

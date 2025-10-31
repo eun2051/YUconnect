@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'notification_screen.dart';
+import 'package:yuconnect/screens/notification_screen.dart';
 import 'notice_screen.dart'; // NoticeScreen import 추가
 import '../../components/line_rounded_bell.dart';
 import '../../components/inquiry_card.dart';

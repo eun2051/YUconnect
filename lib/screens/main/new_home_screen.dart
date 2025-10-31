@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'notification_screen.dart';
+import 'package:yuconnect/screens/main/notification_screen.dart';
 import 'notice_screen.dart';
 import 'main_screen.dart';
 import '../../components/simple_calendar_bottom_sheet.dart';
 import '../../components/student_council_events_section.dart';
+import '../../repositories/inquiry_repository.dart';
+import '../../models/inquiry.dart';
 
 /// YUconnect 홈화면 (새로운 디자인)
 /// - 피그마 디자인을 기반으로 한 새로운 인터페이스
@@ -18,6 +20,8 @@ class NewHomeScreen extends StatefulWidget {
 class NewHomeScreenState extends State<NewHomeScreen> {
   // 0: 공지사항, 1: 학사일정, 2: 총학생회 행사, 3: 민원조회
   int _selectedTab = 0;
+
+  final InquiryRepository _inquiryRepository = InquiryRepository();
 
   // 외부에서 탭을 강제로 변경할 수 있도록 메서드 추가
   void setTab(int index, {int? noticeTab}) {
@@ -51,6 +55,9 @@ class NewHomeScreenState extends State<NewHomeScreen> {
               _buildHeader(),
               _buildSearchBar(),
               _buildTabBar(),
+              const SizedBox(height: 16), // 슬라이드 탭과 섹션헤더 사이 간격
+              _buildSectionHeader(),
+              const SizedBox(height: 12), // 섹션헤더와 카드들 사이 간격
               _buildContent(),
             ],
           ),
@@ -237,24 +244,57 @@ class NewHomeScreenState extends State<NewHomeScreen> {
 
   /// 메인 콘텐츠
   Widget _buildContent() {
-    if (_selectedTab == 2) {
-      // 총학생회 행사 탭인 경우 특별한 레이아웃
-      return const StudentCouncilEventsSection();
+    switch (_selectedTab) {
+      case 0: // 공지사항
+        return _buildNoticeCardsForTab([
+          {'title': '[SW중심대학사업단] 산학협력객원 교수 채용 공고', 'date': '2025.09.17'},
+          {'title': '[연구원 채용]', 'date': '2025.09.17'},
+        ]);
+      case 1: // 학사일정
+        return _buildNoticeCardsForTab([
+          {'title': '2025년 2학기 기말고사 일정 안내', 'date': '2025.12.10'},
+          {'title': '겨울방학 계절학기 수강신청', 'date': '2025.12.05'},
+        ]);
+      case 2: // 총학생회 행사
+        return const StudentCouncilEventsSection();
+      case 3: // 민원조회
+        return _buildUserInquiriesSection();
+      default:
+        return Container();
     }
+  }
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.only(top: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSectionHeader(),
-          const SizedBox(height: 16),
-          _buildNoticeCards(),
-          const SizedBox(height: 40),
-          if (_selectedTab == 0) _buildCommunitySection(),
-        ],
-      ),
+  Widget _buildUserInquiriesSection() {
+    return StreamBuilder<List<Inquiry>>(
+      stream: _inquiryRepository.getCurrentUserInquiries(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final inquiries = snapshot.data ?? [];
+        if (inquiries.isEmpty) {
+          return const Padding(
+            padding: EdgeInsets.all(32),
+            child: Center(
+              child: Text(
+                '등록한 민원이 없습니다.',
+                style: TextStyle(color: Colors.grey, fontSize: 16),
+              ),
+            ),
+          );
+        }
+        return _buildNoticeCardsForTab(
+          inquiries
+              .map(
+                (inquiry) => {
+                  'title': inquiry.content,
+                  'date': inquiry.createdAt.toString().substring(0, 10),
+                  'status': inquiry.status.displayName,
+                },
+              )
+              .toList(),
+        );
+      },
     );
   }
 
@@ -264,7 +304,7 @@ class NewHomeScreenState extends State<NewHomeScreen> {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(left: 22, right: 16), // 왼쪽을 22픽셀로 조금 줄임
+      padding: const EdgeInsets.only(left: 22, right: 16),
       margin: const EdgeInsets.only(bottom: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -281,48 +321,38 @@ class NewHomeScreenState extends State<NewHomeScreen> {
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              if (_selectedTab == 0) {
-                // 공지사항 더보기
-                final mainState = context
-                    .findAncestorStateOfType<MainScreenState>();
-                if (mainState != null) {
-                  mainState.setTab(1, noticeTab: 0);
+          if (_selectedTab != 2) // 총학생회 행사 탭에서는 더보기 버튼 숨김
+            GestureDetector(
+              onTap: () {
+                if (_selectedTab == 0) {
+                  // 공지사항 더보기
+                  final mainState = context
+                      .findAncestorStateOfType<MainScreenState>();
+                  if (mainState != null) {
+                    mainState.setTab(1, noticeTab: 0);
+                  }
+                } else if (_selectedTab == 1) {
+                  // 학사일정 더보기 (캘린더)
+                  _showCalendarSheet();
+                } else if (_selectedTab == 3) {
+                  // 민원조회 더보기
+                  final mainState = context
+                      .findAncestorStateOfType<MainScreenState>();
+                  if (mainState != null) {
+                    mainState.setTab(2); // 민원 탭으로 이동
+                  }
                 }
-              } else if (_selectedTab == 1) {
-                // 학사일정 더보기 (캘린더)
-                _showCalendarSheet();
-              } else if (_selectedTab == 2) {
-                // 총학생회 행사 더보기 (임시 주석 처리)
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => const StudentCouncilEventsListScreen(),
-                //   ),
-                // );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('총학생회 행사 기능은 준비 중입니다.')),
-                );
-              } else if (_selectedTab == 3) {
-                // 민원조회 더보기
-                final mainState = context
-                    .findAncestorStateOfType<MainScreenState>();
-                if (mainState != null) {
-                  mainState.setTab(2); // 민원 탭으로 이동
-                }
-              }
-            },
-            child: Text(
-              '더보기',
-              style: TextStyle(
-                color: const Color(0xFF006FFD),
-                fontSize: 15,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w600,
+              },
+              child: Text(
+                '더보기',
+                style: TextStyle(
+                  color: const Color(0xFF006FFD),
+                  fontSize: 15,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -373,7 +403,7 @@ class NewHomeScreenState extends State<NewHomeScreen> {
                 item['status'],
                 75, // 높이를 86에서 75로 줄임
               ),
-              if (!isLast) const SizedBox(height: 12),
+              if (!isLast) const SizedBox(height: 16), // 카드 간 간격 16
             ],
           );
         }),
