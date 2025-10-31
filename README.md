@@ -1,115 +1,73 @@
-# YU-Connect 📱
+# YU-Connect: 영남대학교 통합 민원 및 소통 커뮤니티 앱
 
-**영남대학교 통합 민원 및 소통 커뮤니티 앱**
+## 프로젝트 소개 및 배경
 
-YU-Connect는 영남대학교 학생들의 불편사항 및 건의사항을 효율적으로 처리하고, 학교 생활 편의와 소통을 활성화하기 위한 iOS/Android 통합 모바일 애플리케이션입니다.
+영남대학교 학생들의 불편사항, 건의사항, 학교 생활 정보 등을 쉽고 빠르게 소통하고 해결할 수 있도록 만든 공식 모바일 애플리케이션입니다. 기존의 복잡한 민원 처리와 정보 전달 방식을 개선하고, 학생들이 실시간으로 소통할 수 있는 커뮤니티 공간을 제공하기 위해 개발되었습니다.
 
-## ✨ 주요 기능
+- **문제의식**: 학교 내 민원 처리의 비효율성, 정보 전달의 단절, 학생 간 소통의 어려움
+- **목표**: 학생들이 모바일에서 쉽고 빠르게 민원을 등록/조회하고, 공지사항, FAQ, 커뮤니티, 푸시 알림 등 다양한 기능을 한 곳에서 이용할 수 있도록 지원
 
-- 🔐 **사용자 인증**: 이메일/비밀번호 기반 로그인 및 회원가입
-- 📝 **민원 시스템**: 민원 등록, 현황 조회, 답변 확인
-- 📢 **공지사항**: 학교 공지, 학사일정, 총학생회 행사 정보
-- 💬 **학과 커뮤니티**: 학과별 소통 공간
-- 🔔 **푸시 알림**: 민원 답변 및 중요 공지 알림
-- 👤 **프로필 관리**: 사용자 정보 및 설정 관리
+## 사용한 기술 및 스킬셋
 
-## 🛠 기술 스택
+- **Flutter 3.x**: iOS/Android 동시 지원 크로스플랫폼 UI 프레임워크
+- **Dart**: 메인 프로그래밍 언어
+- **Firebase**
+  - Authentication: 이메일/비밀번호 기반 회원가입 및 로그인
+  - Firestore: 실시간 데이터베이스 (민원, 공지사항, FAQ 등)
+  - Storage: 이미지 등 파일 업로드
+  - Cloud Messaging: 푸시 알림
+- **상태관리**: Riverpod/Provider
+- **기타**: 커스텀 위젯, 탭/네비게이션, 실시간 데이터 연동, 디자인 시스템 적용
 
-- **Framework**: Flutter 3.x
-- **Language**: Dart
-- **Backend**: Firebase
-  - Authentication (사용자 인증)
-  - Firestore (데이터베이스)
-  - Storage (파일 저장)
-  - Cloud Messaging (푸시 알림)
-- **State Management**: Provider/Riverpod
-- **Platforms**: iOS, Android
+## 실행 방법
 
-## 📱 지원 플랫폼
+### 1. Flutter 개발 환경 준비
+- [Flutter 공식 홈페이지](https://flutter.dev/docs/get-started/install)에서 본인 OS에 맞는 Flutter SDK를 설치하세요.
+- 환경 변수(PATH)에 Flutter를 추가하세요.
+- `flutter --version` 명령어로 정상 설치를 확인하세요.
+- Android Studio(또는 VS Code), Xcode(맥 사용 시) 등 개발 툴을 설치하세요.
+- Android/iOS 에뮬레이터 또는 실제 기기 준비(테스트용)
 
-- iOS 12.0+
-- Android API 21+ (Android 5.0+)
-
-## 🚀 시작하기
-
-### 필수 조건
-
-- Flutter SDK 3.0+
-- Dart SDK 3.0+
-- Android Studio / Xcode
-- Firebase 프로젝트 설정
-
-### 설치 방법
-
-1. **저장소 클론**
-   ```bash
-   git clone https://github.com/eun2051/YUconnect.git
-   cd YUconnect
-   ```
-
-2. **의존성 설치**
-   ```bash
-   flutter pub get
-   ```
-
-3. **Firebase 설정**
-   - Firebase Console에서 프로젝트 생성
-   - `android/app/google-services.json` 파일 추가
-   - `ios/GoogleService-Info.plist` 파일 추가
-
-4. **앱 실행**
-   ```bash
-   flutter run
-   ```
-
-## 📁 프로젝트 구조
-
+### 2. 프로젝트 클론 및 의존성 설치
+- 터미널(명령 프롬프트)에서 아래 명령어를 차례로 입력하세요:
+```bash
+git clone https://github.com/eun2051/YUconnect.git
+cd yuconnect
+flutter pub get
 ```
-lib/
-├── components/       # 재사용 가능한 UI 컴포넌트
-├── models/          # 데이터 모델
-├── providers/       # 상태 관리
-├── repositories/    # 데이터 처리 로직
-├── screens/         # 화면별 UI
-│   ├── auth/        # 인증 관련 화면
-│   ├── main/        # 메인 기능 화면
-│   ├── inquiry/     # 민원 관련 화면
-│   └── profile/     # 프로필 화면
-└── services/        # Firebase 연동 서비스
+- `flutter pub get` 명령어로 필요한 모든 패키지를 자동으로 설치합니다.
+
+### 3. Firebase 연동
+- [Firebase 콘솔](https://console.firebase.google.com/)에서 새 프로젝트를 생성하세요.
+- Android 앱 등록 후 `google-services.json` 파일을 다운로드 받아 `android/app/` 폴더에 넣으세요.
+- iOS 앱 등록 후 `GoogleService-Info.plist` 파일을 다운로드 받아 `ios/Runner/` 폴더에 넣으세요.
+- (필요시) Firestore, Authentication, Storage, Cloud Messaging 등 Firebase 서비스 활성화
+
+### 4. 앱 실행하기
+- Android 에뮬레이터 또는 iOS 시뮬레이터를 실행하거나, USB로 실제 기기를 연결하세요.
+- 아래 명령어로 앱을 실행합니다:
+```bash
+flutter run
 ```
+- 기기가 여러 대일 경우, `flutter devices`로 목록 확인 후 `flutter run -d <device_id>`로 실행할 수 있습니다.
 
-## 🔧 개발 환경 설정
-
-### Firebase 설정
-
-1. [Firebase Console](https://console.firebase.google.com)에서 프로젝트 생성
-2. Authentication 활성화 (이메일/비밀번호)
-3. Firestore Database 생성
-4. Storage 버킷 생성
-5. Cloud Messaging 설정
-
-### 환경 변수
-
-Firebase 설정 파일들은 보안상 Git에 포함되지 않습니다:
-- `android/app/google-services.json`
-- `ios/GoogleService-Info.plist`
-
-## 🤝 기여하기
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 라이선스
-
-이 프로젝트는 영남대학교의 내부 프로젝트입니다.
-
-## 📞 문의
-
-프로젝트 관련 문의사항이 있으시면 Issues를 통해 연락해주세요.
+### 5. (선택) 더미 민원 데이터 일괄 삭제 스크립트 실행
+- Firestore의 `inquiries` 컬렉션에 테스트 데이터가 많을 경우, 아래 명령어로 일괄 삭제할 수 있습니다:
+```bash
+dart lib/scripts/delete_all_inquiries.dart
+```
+- 이 스크립트는 Firebase 프로젝트와 연결된 상태에서만 정상 동작합니다.
 
 ---
 
-**Made with ❤️ for 영남대학교 학생들**
+## 주요 폴더 구조
+- `lib/screens/` : 주요 화면(UI)
+- `lib/widgets/` : 재사용 위젯
+- `lib/services/` : Firebase 등 서비스 연동
+- `lib/repositories/` : 데이터 처리 로직
+- `lib/models/` : 데이터 모델
+- `lib/scripts/` : 관리용 Dart 스크립트
+
+---
+
+문의: gene5518@naver.com

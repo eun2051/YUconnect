@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/inquiry.dart';
 import '../../repositories/inquiry_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
 
 /// 민원 조회 화면 (택배 조회 스타일)
 class InquiryTrackingScreen extends StatefulWidget {
@@ -16,11 +17,18 @@ class _InquiryTrackingScreenState extends State<InquiryTrackingScreen> {
   Inquiry? _selectedInquiry;
   List<Inquiry> _userInquiries = [];
   bool _isLoading = true;
+  StreamSubscription<List<Inquiry>>? _inquirySubscription;
 
   @override
   void initState() {
     super.initState();
     _loadUserInquiries();
+  }
+
+  @override
+  void dispose() {
+    _inquirySubscription?.cancel();
+    super.dispose();
   }
 
   /// 사용자의 민원 목록 로드
@@ -31,7 +39,7 @@ class _InquiryTrackingScreenState extends State<InquiryTrackingScreen> {
         final inquiriesStream = _inquiryRepository.getInquiriesByUserId(
           user.uid,
         );
-        inquiriesStream.listen((inquiries) {
+        _inquirySubscription = inquiriesStream.listen((inquiries) {
           if (mounted) {
             setState(() {
               _userInquiries = inquiries;
@@ -230,6 +238,10 @@ class _InquiryTrackingScreenState extends State<InquiryTrackingScreen> {
 
   /// 민원 진행 상황 조회 화면
   Widget _buildTrackingView() {
+    if (_selectedInquiry == null) {
+      return const Center(child: Text('민원 정보가 없습니다.'));
+    }
+
     return Column(
       children: [
         // 선택된 민원 정보
@@ -392,6 +404,7 @@ class _InquiryTrackingScreenState extends State<InquiryTrackingScreen> {
 
   /// 진행 단계 목록 반환
   List<Map<String, String>> _getProgressSteps() {
+    if (_selectedInquiry == null) return [];
     return [
       {'title': '민원 등록', 'date': _formatDate(_selectedInquiry!.createdAt)},
       {
@@ -419,6 +432,7 @@ class _InquiryTrackingScreenState extends State<InquiryTrackingScreen> {
 
   /// 현재 진행 단계 인덱스 반환
   int _getCurrentStepIndex() {
+    if (_selectedInquiry == null) return 0;
     switch (_selectedInquiry!.status) {
       case InquiryStatus.registered:
         return 0;
@@ -508,7 +522,8 @@ class _InquiryTrackingScreenState extends State<InquiryTrackingScreen> {
   }
 
   /// 날짜 포맷팅
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime? date) {
+    if (date == null) return '';
     return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
   }
 }
